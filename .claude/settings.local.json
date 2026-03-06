@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc --noEmit)",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(taskkill //F //IM electron.exe)",
+      "Bash(node -e \":*)",
+      "Bash(npm install electron@32 --save-dev)",
+      "Bash(node_modules/.bin/electron --version)",
+      "Bash(npm run dev)"
+    ]
+  }
+}

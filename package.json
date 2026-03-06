@@ -1,0 +1,60 @@
+{
+  "name": "my-portfolio-finder",
+  "version": "1.0.0",
+  "private": true,
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "client": "vite",
+    "server": "node server.js",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "electron:dev": "concurrently \"npm run server\" \"npm run client\" \"wait-on http://localhost:7000 && electron .\"",
+    "electron:build": "npm run build && electron-builder",
+    "electron:preview": "npm run build && electron ."
+  },
+  "build": {
+    "appId": "com.ashok.portfoliosignalfinder",
+    "productName": "Portfolio Signal Finder",
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "server.js",
+      "node_modules/**/*",
+      "package.json",
+      ".env"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "public/favicon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "dependencies": {
+    "axios": "^1.6.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.3.1",
+    "express": "^4.18.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/react": "^18.2.55",
+    "@types/react-dom": "^18.2.19",
+    "@vitejs/plugin-react": "^4.2.1",
+    "concurrently": "^8.2.2",
+    "electron": "^32.3.3",
+    "electron-builder": "^26.8.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.1.4",
+    "wait-on": "^8.0.5"
+  }
+}

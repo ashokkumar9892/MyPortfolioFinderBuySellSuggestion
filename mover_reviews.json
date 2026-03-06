@@ -1,0 +1,10 @@
+[
+  {
+    "date": "2026-03-06",
+    "correct": 16,
+    "total": 113,
+    "winRate": 0.1415929203539823,
+    "tuningSummary": "Win rate 14% — tightened thresholds significantly",
+    "savedAt": "2026-03-06T00:00:00.027Z"
+  }
+]

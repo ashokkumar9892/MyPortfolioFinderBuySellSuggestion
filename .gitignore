@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+
+# Environment variables — NEVER commit these (contains API keys)
+.env
+.env.local
+.env.*.local
+
+# Vite / TypeScript cache
+*.tsbuildinfo
+.vite/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.vscode/settings.json
