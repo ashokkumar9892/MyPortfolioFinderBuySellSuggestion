@@ -1,9 +1,10 @@
 import React from 'react';
-import { TradingSignal, SignalType, TradeMode } from '../types';
+import { TradingSignal, SignalType, TradeMode, MonthData } from '../types';
 
 interface Props {
   signal: TradingSignal;
   tradeMode: TradeMode;
+  activeMonth?: MonthData;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -276,6 +277,107 @@ const DayRange: React.FC<RangeProps> = ({
   );
 };
 
+// ─── Monthly Plan Section (replaces Day/Swing when monthly mode is active) ────
+
+interface MonthlyPlanProps {
+  entry: number;
+  month: MonthData;
+  signal: SignalType;
+}
+
+const MonthlyPlan: React.FC<MonthlyPlanProps> = ({ entry, month, signal }) => {
+  const { high, low } = month;
+  const rangeSize = high - low;
+  if (rangeSize <= 0 || low <= 0) return null;
+
+  const curPct    = rangePos(entry, low, rangeSize);
+  const toHighPct = entry > 0 ? ((high - entry) / entry) * 100 : 0;
+  const toLowPct  = entry > 0 ? ((entry - low)  / entry) * 100 : 0;
+  const rangePct  = low > 0   ? (rangeSize / low) * 100 : 0;
+
+  const isLong  = signal === 'BUY' || signal === 'BUY TO COVER';
+  const isShort = signal === 'SELL SHORT' || signal === 'SELL';
+
+  const posLabel =
+    curPct >= 80 ? 'Near Month High' :
+    curPct <= 20 ? 'Near Month Low'  : 'Mid Range';
+  const posColor =
+    curPct >= 80 ? '#f85149' : curPct <= 20 ? '#3fb950' : '#e3b341';
+
+  return (
+    <div className="sc-plan sc-plan-monthly">
+      <div className="sc-plan-title">
+        📅 {month.label} — Expected Range
+        {month.isProjected
+          ? <span className="sc-proj-chip">Projected</span>
+          : <span className="sc-actual-chip">Actual</span>}
+      </div>
+
+      {/* ── Range bar ───────────────────────────────────────────────── */}
+      <div className="range-bar-wrap" style={{ marginBottom: 6 }}>
+        <span className="range-edge red">${fmt(low)}</span>
+        <div className="range-bar" title={`$${fmt(entry)} — ${curPct.toFixed(0)}% of month range`}>
+          <div className="range-fill monthly-fill" style={{ width: `${curPct}%` }} />
+          <div className="range-marker" style={{ left: `${curPct}%` }} />
+        </div>
+        <span className="range-edge green">${fmt(high)}</span>
+      </div>
+
+      {/* ── Big return banner ────────────────────────────────────────── */}
+      <div className="sc-return-banner">
+        <div className="sc-return-side">
+          <span className="sc-return-lbl">Month High</span>
+          <span className="sc-return-big sc-green">+{toHighPct.toFixed(2)}%</span>
+        </div>
+        <div className="sc-return-side sc-return-right">
+          <span className="sc-return-lbl">Month Low</span>
+          <span className="sc-return-big sc-red">-{toLowPct.toFixed(2)}%</span>
+        </div>
+        <div className="sc-return-side sc-return-right">
+          <span className="sc-return-lbl">Range</span>
+          <span className="sc-return-big">{rangePct.toFixed(1)}%</span>
+        </div>
+      </div>
+
+      {/* ── Price levels ─────────────────────────────────────────────── */}
+      <div className="sc-plan-grid">
+        <div className="sc-plan-row">
+          <span className="sc-plan-lbl">Current Price</span>
+          <span className="sc-plan-val">${fmt(entry)}</span>
+        </div>
+        <div className="sc-plan-row">
+          <span className="sc-plan-lbl">📈 Expected High</span>
+          <span className="sc-plan-val sc-green">
+            ${fmt(high)} <span className="sc-plan-pct">(+{toHighPct.toFixed(2)}%)</span>
+          </span>
+        </div>
+        <div className="sc-plan-row">
+          <span className="sc-plan-lbl">📉 Expected Low</span>
+          <span className="sc-plan-val sc-red">
+            ${fmt(low)} <span className="sc-plan-pct">(-{toLowPct.toFixed(2)}%)</span>
+          </span>
+        </div>
+        <div className="sc-plan-row">
+          <span className="sc-plan-lbl">Position in Range</span>
+          <span className="sc-plan-val" style={{ color: posColor }}>
+            {curPct.toFixed(0)}% — {posLabel}
+          </span>
+        </div>
+      </div>
+
+      {/* ── Signal context ──────────────────────────────────────────── */}
+      {(isLong || isShort) && (
+        <div className="monthly-context">
+          {isLong  && curPct <= 30 && <span className="monthly-tag monthly-tag-good">✅ Buying near month low — good entry zone</span>}
+          {isLong  && curPct >= 70 && <span className="monthly-tag monthly-tag-warn">⚠️ Buying near month high — extended</span>}
+          {isShort && curPct >= 70 && <span className="monthly-tag monthly-tag-good">✅ Shorting near month high — good entry zone</span>}
+          {isShort && curPct <= 30 && <span className="monthly-tag monthly-tag-warn">⚠️ Shorting near month low — extended</span>}
+        </div>
+      )}
+    </div>
+  );
+};
+
 // ─── Base pcts for HOLD fallback targets ─────────────────────────────────────
 const HOLD_DAY_TARGET   = 0.025;   // 2.5%
 const HOLD_DAY_STOP     = 0.015;   // 1.5%
@@ -284,7 +386,7 @@ const HOLD_SWING_STOP   = 0.030;   // 3.0%  (2× day)
 
 // ─── StockCard ────────────────────────────────────────────────────────────────
 
-const StockCard: React.FC<Props> = ({ signal }) => {
+const StockCard: React.FC<Props> = ({ signal, activeMonth }) => {
   const { label, cls, emoji } = SIGNAL_META[signal.signal];
   const { indicators: ind } = signal;
 
@@ -395,8 +497,13 @@ const StockCard: React.FC<Props> = ({ signal }) => {
         intradayChange={signal.intradayChange}
       />
 
+      {/* ── Monthly Plan (replaces Day/Swing when active) ─────────────── */}
+      {activeMonth && (
+        <MonthlyPlan entry={entry} month={activeMonth} signal={signal.signal} />
+      )}
+
       {/* ── Day Trade Plan ─────────────────────────────────────────────── */}
-      <div className="sc-plan sc-plan-day">
+      {!activeMonth && <div className="sc-plan sc-plan-day">
         <div className="sc-plan-title">
           📅 Day Trade — Exit Same Day
           {isHold && <span className="sc-expected-chip">Expected Range</span>}
@@ -439,10 +546,10 @@ const StockCard: React.FC<Props> = ({ signal }) => {
             </span>
           </div>
         </div>
-      </div>
+      </div>}
 
       {/* ── Swing Trade Plan ───────────────────────────────────────────── */}
-      <div className="sc-plan sc-plan-swing">
+      {!activeMonth && <div className="sc-plan sc-plan-swing">
         <div className="sc-plan-title">
           📆 Swing Trade
           <span className="sc-hold-chip">Hold until {signal.swingExitDate}</span>
@@ -480,17 +587,19 @@ const StockCard: React.FC<Props> = ({ signal }) => {
             </span>
           </div>
         </div>
-      </div>
+      </div>}
 
       {/* ── Today's Range + T1/T2/T3 + Quick Profits ─────────────────── */}
-      <DayRange
-        current={signal.entryPrice}
-        dayLow={signal.dayLow}
-        dayHigh={signal.dayHigh}
-        dayOpen={signal.dayOpen}
-        prevClose={signal.prevClose}
-        signal={signal.signal}
-      />
+      {!activeMonth && (
+        <DayRange
+          current={signal.entryPrice}
+          dayLow={signal.dayLow}
+          dayHigh={signal.dayHigh}
+          dayOpen={signal.dayOpen}
+          prevClose={signal.prevClose}
+          signal={signal.signal}
+        />
+      )}
 
       {/* ── Indicators Grid ──────────────────────────────────────────── */}
       <div className="indicators-grid">

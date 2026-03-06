@@ -156,6 +156,21 @@ export interface MoverSnapshot {
   changePercent: number;  // gainer/loser % at prediction time
 }
 
+// ─── Monthly Range ────────────────────────────────────────────────────────────
+
+export interface MonthData {
+  label: string;        // "Mar 2026"
+  key: string;          // "2026-03"
+  high: number;
+  low: number;
+  isProjected: boolean;
+}
+
+export interface MonthlyRangeData {
+  symbol: string;
+  months: Record<string, MonthData>;  // keyed by "YYYY-MM"
+}
+
 // ─── App State ────────────────────────────────────────────────────────────────
 
 export type LoadingState = 'idle' | 'loading' | 'refreshing' | 'error';

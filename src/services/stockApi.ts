@@ -1,4 +1,4 @@
-import { StockData } from '../types';
+import { StockData, MonthlyRangeData, MonthData } from '../types';
 
 const BASE = '/api'; // proxied by Vite → Express on :7001
 
@@ -115,6 +115,95 @@ export async function fetchAllStocks(symbols: string[]): Promise<StockData[]> {
     return settled.map((r, i) =>
       r.status === 'fulfilled' && r.value ? r.value : makeError(symbols[i], 'Fetch failed')
     );
+  }
+}
+
+/**
+ * Fetch 6 months of daily candles for all symbols.
+ * Returns actual high/low per calendar month + 3 projected future months.
+ */
+export async function fetchMonthlyRanges(
+  symbols: string[],
+): Promise<Record<string, MonthlyRangeData>> {
+  try {
+    const res = await fetch(`${BASE}/stocks/batch`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ symbols, interval: '1d', range: '6mo' }),
+    });
+    if (!res.ok) throw new Error('Batch failed');
+    const batch: Record<string, { success: boolean; data?: unknown; error?: string }> =
+      await res.json();
+
+    const result: Record<string, MonthlyRangeData> = {};
+
+    for (const sym of symbols) {
+      const entry = batch[sym];
+      if (!entry?.success || !entry.data) continue;
+      const r = (entry.data as { chart?: { result?: YFResult[] } }).chart?.result?.[0];
+      if (!r) continue;
+      const q = r.indicators?.quote?.[0];
+      const timestamps = r.timestamp ?? [];
+      if (!q || !timestamps.length) continue;
+
+      const currentPrice: number = r.meta.regularMarketPrice ?? 0;
+
+      // ── Group daily highs/lows into calendar month buckets ──────────────
+      const buckets: Record<string, { highs: number[]; lows: number[]; closes: number[] }> = {};
+      timestamps.forEach((ts, i) => {
+        const d = new Date(ts * 1000);
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        if (!buckets[key]) buckets[key] = { highs: [], lows: [], closes: [] };
+        if (q.high[i]  != null) buckets[key].highs.push(q.high[i] as number);
+        if (q.low[i]   != null) buckets[key].lows.push(q.low[i] as number);
+        if (q.close[i] != null) buckets[key].closes.push(q.close[i] as number);
+      });
+
+      // ── Build actual MonthData from buckets ──────────────────────────────
+      const months: Record<string, MonthData> = {};
+      const monthRangePcts: number[] = [];
+
+      for (const [key, bucket] of Object.entries(buckets)) {
+        if (!bucket.highs.length || !bucket.lows.length) continue;
+        const [yearStr, moStr] = key.split('-');
+        const year = parseInt(yearStr);
+        const mo   = parseInt(moStr);     // 1-12
+        const high = Math.max(...bucket.highs);
+        const low  = Math.min(...bucket.lows);
+        const midClose = bucket.closes[Math.floor(bucket.closes.length / 2)] || currentPrice;
+        if (midClose > 0) monthRangePcts.push((high - low) / midClose);
+        const label = new Date(year, mo - 1, 1)
+          .toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        months[key] = { label, key, high, low, isProjected: false };
+      }
+
+      // ── Project 3 future months using avg monthly volatility × √N ───────
+      const avgRangePct = monthRangePcts.length
+        ? monthRangePcts.reduce((a, b) => a + b, 0) / monthRangePcts.length
+        : 0.10;   // fallback 10%
+
+      const now = new Date();
+      for (let n = 1; n <= 3; n++) {
+        const d = new Date(now.getFullYear(), now.getMonth() + n, 1);
+        const yr = d.getFullYear();
+        const mo = d.getMonth() + 1;
+        const key = `${yr}-${String(mo).padStart(2, '0')}`;
+        if (months[key]) continue;   // already have actual data
+        const halfRange = (avgRangePct / 2) * Math.sqrt(n);
+        const label = d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        months[key] = {
+          label, key,
+          high: parseFloat((currentPrice * (1 + halfRange)).toFixed(2)),
+          low:  parseFloat((currentPrice * (1 - halfRange)).toFixed(2)),
+          isProjected: true,
+        };
+      }
+
+      result[sym.toUpperCase()] = { symbol: sym.toUpperCase(), months };
+    }
+    return result;
+  } catch {
+    return {};
   }
 }
 

@@ -682,7 +682,8 @@ button {
 }
 .trade-mode-btn:hover { border-color: var(--blue); color: var(--text); }
 .trade-mode-btn.active-day  { background: var(--blue-dim);   border-color: var(--blue);   color: var(--blue); }
-.trade-mode-btn.active-swing{ background: var(--purple-dim, rgba(188,140,255,0.15)); border-color: var(--purple); color: var(--purple); }
+.trade-mode-btn.active-swing  { background: var(--purple-dim, rgba(188,140,255,0.15)); border-color: var(--purple); color: var(--purple); }
+.trade-mode-btn.active-monthly{ background: rgba(227,179,65,0.15); border-color: var(--yellow); color: var(--yellow); }
 
 .trade-mode-hint {
   font-size: 11px;
@@ -774,6 +775,104 @@ button {
 .qp-pct   { font-size: 10px; font-weight: 600; text-align: right; min-width: 52px; }
 .qp-val.green, .qp-pct.green { color: var(--green); }
 .qp-val.red,   .qp-pct.red   { color: var(--red); }
+
+/* ─── Month Navigation Bar ──────────────────────────────────────────────────── */
+.month-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 8px 16px;
+  background: rgba(227, 179, 65, 0.08);
+  border-bottom: 1px solid rgba(227, 179, 65, 0.3);
+}
+
+.month-nav-btn {
+  background: var(--bg3);
+  border: 1px solid var(--yellow);
+  color: var(--yellow);
+  padding: 4px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.month-nav-btn:hover { background: rgba(227,179,65,0.15); }
+
+.month-nav-center {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 200px;
+  justify-content: center;
+}
+
+.month-nav-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--yellow);
+  letter-spacing: 0.3px;
+}
+
+.month-chip {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.month-chip-current   { background: rgba(63,185,80,0.15);  color: var(--green); }
+.month-chip-projected { background: rgba(88,166,255,0.15); color: var(--blue); }
+.month-chip-history   { background: rgba(139,148,158,0.2); color: var(--text2); }
+
+/* ─── Monthly Plan Card Section ─────────────────────────────────────────────── */
+.sc-plan-monthly {
+  border-color: rgba(227,179,65,0.5) !important;
+  background: rgba(227,179,65,0.04) !important;
+}
+
+.sc-proj-chip {
+  background: rgba(88,166,255,0.15);
+  color: var(--blue);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sc-actual-chip {
+  background: rgba(63,185,80,0.15);
+  color: var(--green);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.monthly-fill { background: rgba(227, 179, 65, 0.35) !important; }
+
+.monthly-context {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.monthly-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.monthly-tag-good { background: rgba(63,185,80,0.15); color: var(--green); }
+.monthly-tag-warn { background: rgba(248,81,73,0.12); color: var(--red); }
 
 /* ─── Review Panel ───────────────────────────────────────────────────────────── */
 .review-panel {

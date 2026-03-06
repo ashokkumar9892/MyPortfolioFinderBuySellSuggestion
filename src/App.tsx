@@ -8,8 +8,10 @@ import {
   StrategyParams,
   SignalType,
   TradeMode,
+  MonthlyRangeData,
+  MonthData,
 } from './types';
-import { fetchAllStocks, marketStatusLabel, isMarketOpen, marketSession } from './services/stockApi';
+import { fetchAllStocks, fetchMonthlyRanges, marketStatusLabel, isMarketOpen, marketSession } from './services/stockApi';
 import { analyzeStock } from './services/strategy';
 import {
   loadParams,
@@ -47,6 +49,10 @@ const App: React.FC = () => {
   const [filter, setFilter] = useState<FilterOption>('ALL');
   const [sortBy, setSortBy] = useState<'return' | 'symbol' | 'confidence' | 'score'>('return');
   const [tradeMode, setTradeMode] = useState<TradeMode>('DAY');
+  const [monthlyView, setMonthlyView] = useState(false);
+  const [monthlyRanges, setMonthlyRanges] = useState<Record<string, MonthlyRangeData>>({});
+  const [monthlyLoading, setMonthlyLoading] = useState(false);
+  const [selectedMonthOffset, setSelectedMonthOffset] = useState(0);
   const [reviewMsg, setReviewMsg] = useState('');
   const [countdown, setCountdown] = useState('');
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -151,6 +157,37 @@ const App: React.FC = () => {
   function handleModeChange(mode: TradeMode) {
     setTradeMode(mode);
     reanalyse(mode);
+  }
+
+  async function handleMonthlyToggle() {
+    const next = !monthlyView;
+    setMonthlyView(next);
+    if (next && Object.keys(monthlyRanges).length === 0) {
+      setMonthlyLoading(true);
+      const data = await fetchMonthlyRanges(SYMBOLS);
+      setMonthlyRanges(data);
+      setMonthlyLoading(false);
+    }
+    if (!next) setSelectedMonthOffset(0);
+  }
+
+  function getMonthKey(offset: number): string {
+    const d = new Date();
+    d.setDate(1);
+    d.setMonth(d.getMonth() + offset);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  }
+
+  function getMonthLabel(offset: number): string {
+    const d = new Date();
+    d.setDate(1);
+    d.setMonth(d.getMonth() + offset);
+    return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  }
+
+  function getActiveMonth(sym: string): MonthData | undefined {
+    const key = getMonthKey(selectedMonthOffset);
+    return monthlyRanges[sym]?.months[key];
   }
 
   // ── Filtered & sorted ────────────────────────────────────────────────────
@@ -258,6 +295,14 @@ const App: React.FC = () => {
           >
             🌙 Swing
           </button>
+          <button
+            className={`trade-mode-btn monthly-btn ${monthlyView ? 'active-monthly' : ''}`}
+            onClick={handleMonthlyToggle}
+            disabled={monthlyLoading}
+            title="Show 1-month price range on each stock card"
+          >
+            {monthlyLoading ? '⟳ Loading…' : '📅 Monthly'}
+          </button>
           <span className="trade-mode-hint">
             {tradeMode === 'DAY'
               ? 'Intraday — tight stops'
@@ -265,6 +310,26 @@ const App: React.FC = () => {
           </span>
         </div>
       </nav>
+
+      {/* ── Monthly month navigation bar ─────────────────────────────────── */}
+      {monthlyView && (
+        <div className="month-nav-bar">
+          <button
+            className="month-nav-btn"
+            onClick={() => setSelectedMonthOffset(o => Math.max(o - 1, -5))}
+          >‹ Prev</button>
+          <div className="month-nav-center">
+            <span className="month-nav-label">{getMonthLabel(selectedMonthOffset)}</span>
+            {selectedMonthOffset === 0 && <span className="month-chip month-chip-current">Current</span>}
+            {selectedMonthOffset > 0  && <span className="month-chip month-chip-projected">Projected</span>}
+            {selectedMonthOffset < 0  && <span className="month-chip month-chip-history">Historical</span>}
+          </div>
+          <button
+            className="month-nav-btn"
+            onClick={() => setSelectedMonthOffset(o => Math.min(o + 1, 3))}
+          >Next ›</button>
+        </div>
+      )}
 
       {/* ── Extended-hours session banner ────────────────────────────────── */}
       {marketSession() === 'pre' && (
@@ -364,7 +429,12 @@ const App: React.FC = () => {
             ) : (
               <div className="stock-grid">
                 {displayed.map((s) => (
-                  <StockCard key={s.symbol} signal={s} tradeMode={tradeMode} />
+                  <StockCard
+                    key={s.symbol}
+                    signal={s}
+                    tradeMode={tradeMode}
+                    activeMonth={monthlyView ? getActiveMonth(s.symbol) : undefined}
+                  />
                 ))}
               </div>
             )}

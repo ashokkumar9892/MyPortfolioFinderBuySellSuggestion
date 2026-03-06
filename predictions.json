@@ -3065,12 +3065,12 @@
       },
       {
         "symbol": "DAVE",
-        "signal": "HOLD",
+        "signal": "BUY TO COVER",
         "entryPrice": 218.21,
-        "dayTarget": 218.21,
-        "dayStop": 218.21,
-        "swingTarget": 204.57,
-        "swingStop": 224.76
+        "dayTarget": 221.48,
+        "dayStop": 216.02,
+        "swingTarget": 231.85,
+        "swingStop": 211.66
       },
       {
         "symbol": "EXAS",
@@ -3092,12 +3092,12 @@
       },
       {
         "symbol": "GLUE",
-        "signal": "HOLD",
+        "signal": "BUY",
         "entryPrice": 17.95,
-        "dayTarget": 17.95,
-        "dayStop": 17.95,
-        "swingTarget": 16.83,
-        "swingStop": 18.49
+        "dayTarget": 18.4,
+        "dayStop": 17.68,
+        "swingTarget": 19.07,
+        "swingStop": 17.41
       },
       {
         "symbol": "GEMI",
@@ -3137,10 +3137,10 @@
       },
       {
         "symbol": "NNNN",
-        "signal": "HOLD",
+        "signal": "SELL",
         "entryPrice": 21.8,
-        "dayTarget": 21.8,
-        "dayStop": 21.8,
+        "dayTarget": 21.47,
+        "dayStop": 22.02,
         "swingTarget": 20.44,
         "swingStop": 22.45
       },
@@ -3164,12 +3164,12 @@
       },
       {
         "symbol": "NVDL",
-        "signal": "HOLD",
+        "signal": "BUY TO COVER",
         "entryPrice": 81.66,
-        "dayTarget": 81.66,
-        "dayStop": 81.66,
-        "swingTarget": 76.56,
-        "swingStop": 84.11
+        "dayTarget": 82.88,
+        "dayStop": 80.84,
+        "swingTarget": 86.76,
+        "swingStop": 79.21
       },
       {
         "symbol": "ODD",
