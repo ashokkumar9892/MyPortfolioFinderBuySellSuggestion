@@ -4480,5 +4480,884 @@
         "date": "2026-03-06"
       }
     ]
+  },
+  {
+    "tab": "portfolio",
+    "date": "2026-03-08",
+    "savedAt": "2026-03-08T21:28:50.215Z",
+    "predictions": [
+      {
+        "symbol": "ABVX",
+        "signal": "HOLD",
+        "entryPrice": 109.33,
+        "dayTarget": 109.33,
+        "dayStop": 109.33,
+        "swingTarget": 102.5,
+        "swingStop": 112.61
+      },
+      {
+        "symbol": "AAP",
+        "signal": "HOLD",
+        "entryPrice": 50.33,
+        "dayTarget": 50.33,
+        "dayStop": 50.33,
+        "swingTarget": 47.18,
+        "swingStop": 51.84
+      },
+      {
+        "symbol": "ADMA",
+        "signal": "HOLD",
+        "entryPrice": 15.39,
+        "dayTarget": 15.39,
+        "dayStop": 15.39,
+        "swingTarget": 14.43,
+        "swingStop": 15.85
+      },
+      {
+        "symbol": "AGEN",
+        "signal": "HOLD",
+        "entryPrice": 2.96,
+        "dayTarget": 2.96,
+        "dayStop": 2.96,
+        "swingTarget": 2.77,
+        "swingStop": 3.05
+      },
+      {
+        "symbol": "AGMH",
+        "signal": "HOLD",
+        "entryPrice": 1.25,
+        "dayTarget": 1.25,
+        "dayStop": 1.25,
+        "swingTarget": 1.17,
+        "swingStop": 1.29
+      },
+      {
+        "symbol": "AARD",
+        "signal": "HOLD",
+        "entryPrice": 5.85,
+        "dayTarget": 5.85,
+        "dayStop": 5.85,
+        "swingTarget": 5.48,
+        "swingStop": 6.03
+      },
+      {
+        "symbol": "BEKE",
+        "signal": "BUY TO COVER",
+        "entryPrice": 16.67,
+        "dayTarget": 16.92,
+        "dayStop": 16.5,
+        "swingTarget": 17.71,
+        "swingStop": 16.17
+      },
+      {
+        "symbol": "CELC",
+        "signal": "SELL",
+        "entryPrice": 115,
+        "dayTarget": 113.27,
+        "dayStop": 116.16,
+        "swingTarget": 107.81,
+        "swingStop": 118.45
+      },
+      {
+        "symbol": "CNC",
+        "signal": "HOLD",
+        "entryPrice": 43.65,
+        "dayTarget": 43.65,
+        "dayStop": 43.65,
+        "swingTarget": 40.92,
+        "swingStop": 44.96
+      },
+      {
+        "symbol": "CONI",
+        "signal": "HOLD",
+        "entryPrice": 53.45,
+        "dayTarget": 53.45,
+        "dayStop": 53.45,
+        "swingTarget": 50.11,
+        "swingStop": 55.05
+      },
+      {
+        "symbol": "DAVE",
+        "signal": "HOLD",
+        "entryPrice": 217.33,
+        "dayTarget": 217.33,
+        "dayStop": 217.33,
+        "swingTarget": 203.75,
+        "swingStop": 223.85
+      },
+      {
+        "symbol": "EXAS",
+        "signal": "HOLD",
+        "entryPrice": 103.5,
+        "dayTarget": 103.5,
+        "dayStop": 103.5,
+        "swingTarget": 97.03,
+        "swingStop": 106.61
+      },
+      {
+        "symbol": "FIVN",
+        "signal": "BUY TO COVER",
+        "entryPrice": 18.09,
+        "dayTarget": 18.36,
+        "dayStop": 17.91,
+        "swingTarget": 19.22,
+        "swingStop": 17.55
+      },
+      {
+        "symbol": "GLUE",
+        "signal": "HOLD",
+        "entryPrice": 17.8,
+        "dayTarget": 17.8,
+        "dayStop": 17.8,
+        "swingTarget": 16.69,
+        "swingStop": 18.33
+      },
+      {
+        "symbol": "GEMI",
+        "signal": "HOLD",
+        "entryPrice": 8.94,
+        "dayTarget": 8.94,
+        "dayStop": 8.94,
+        "swingTarget": 8.38,
+        "swingStop": 9.21
+      },
+      {
+        "symbol": "LUMN",
+        "signal": "HOLD",
+        "entryPrice": 6.62,
+        "dayTarget": 6.62,
+        "dayStop": 6.62,
+        "swingTarget": 6.21,
+        "swingStop": 6.82
+      },
+      {
+        "symbol": "LWAY",
+        "signal": "HOLD",
+        "entryPrice": 21.25,
+        "dayTarget": 21.25,
+        "dayStop": 21.25,
+        "swingTarget": 19.92,
+        "swingStop": 21.89
+      },
+      {
+        "symbol": "MGPI",
+        "signal": "HOLD",
+        "entryPrice": 18.63,
+        "dayTarget": 18.63,
+        "dayStop": 18.63,
+        "swingTarget": 17.47,
+        "swingStop": 19.19
+      },
+      {
+        "symbol": "NNNN",
+        "signal": "HOLD",
+        "entryPrice": 22.89,
+        "dayTarget": 22.89,
+        "dayStop": 22.89,
+        "swingTarget": 21.46,
+        "swingStop": 23.7
+      },
+      {
+        "symbol": "NPKI",
+        "signal": "BUY TO COVER",
+        "entryPrice": 13.56,
+        "dayTarget": 13.76,
+        "dayStop": 13.42,
+        "swingTarget": 14.41,
+        "swingStop": 13.15
+      },
+      {
+        "symbol": "NVCR",
+        "signal": "HOLD",
+        "entryPrice": 13.04,
+        "dayTarget": 13.04,
+        "dayStop": 13.04,
+        "swingTarget": 12.22,
+        "swingStop": 13.43
+      },
+      {
+        "symbol": "NVDL",
+        "signal": "HOLD",
+        "entryPrice": 76.64,
+        "dayTarget": 76.64,
+        "dayStop": 76.64,
+        "swingTarget": 71.85,
+        "swingStop": 78.94
+      },
+      {
+        "symbol": "ODD",
+        "signal": "HOLD",
+        "entryPrice": 14.19,
+        "dayTarget": 14.19,
+        "dayStop": 14.19,
+        "swingTarget": 13.3,
+        "swingStop": 14.62
+      },
+      {
+        "symbol": "PEGA",
+        "signal": "HOLD",
+        "entryPrice": 47.24,
+        "dayTarget": 47.24,
+        "dayStop": 47.24,
+        "swingTarget": 44.29,
+        "swingStop": 48.66
+      },
+      {
+        "symbol": "QURE",
+        "signal": "SELL",
+        "entryPrice": 14.27,
+        "dayTarget": 14.06,
+        "dayStop": 14.41,
+        "swingTarget": 11.25,
+        "swingStop": 16.03
+      },
+      {
+        "symbol": "RXO",
+        "signal": "HOLD",
+        "entryPrice": 13.74,
+        "dayTarget": 13.74,
+        "dayStop": 13.74,
+        "swingTarget": 12.88,
+        "swingStop": 14.21
+      },
+      {
+        "symbol": "SBUX",
+        "signal": "HOLD",
+        "entryPrice": 98.99,
+        "dayTarget": 98.99,
+        "dayStop": 98.99,
+        "swingTarget": 92.8,
+        "swingStop": 101.96
+      },
+      {
+        "symbol": "SERV",
+        "signal": "HOLD",
+        "entryPrice": 9.44,
+        "dayTarget": 9.44,
+        "dayStop": 9.44,
+        "swingTarget": 8.85,
+        "swingStop": 9.72
+      },
+      {
+        "symbol": "SOGP",
+        "signal": "HOLD",
+        "entryPrice": 13.76,
+        "dayTarget": 13.76,
+        "dayStop": 13.76,
+        "swingTarget": 12.9,
+        "swingStop": 14.17
+      },
+      {
+        "symbol": "TIL",
+        "signal": "HOLD",
+        "entryPrice": 8.87,
+        "dayTarget": 8.87,
+        "dayStop": 8.87,
+        "swingTarget": 8.32,
+        "swingStop": 9.14
+      },
+      {
+        "symbol": "TLS",
+        "signal": "HOLD",
+        "entryPrice": 4.3,
+        "dayTarget": 4.3,
+        "dayStop": 4.3,
+        "swingTarget": 4.03,
+        "swingStop": 4.43
+      },
+      {
+        "symbol": "TREE",
+        "signal": "SELL",
+        "entryPrice": 42.9,
+        "dayTarget": 42.26,
+        "dayStop": 43.33,
+        "swingTarget": 40.22,
+        "swingStop": 44.31
+      },
+      {
+        "symbol": "UPST",
+        "signal": "HOLD",
+        "entryPrice": 27.78,
+        "dayTarget": 27.78,
+        "dayStop": 27.78,
+        "swingTarget": 26.04,
+        "swingStop": 28.61
+      },
+      {
+        "symbol": "WLDN",
+        "signal": "HOLD",
+        "entryPrice": 82.98,
+        "dayTarget": 82.98,
+        "dayStop": 82.98,
+        "swingTarget": 77.79,
+        "swingStop": 85.47
+      },
+      {
+        "symbol": "ZEPP",
+        "signal": "HOLD",
+        "entryPrice": 18.08,
+        "dayTarget": 18.08,
+        "dayStop": 18.08,
+        "swingTarget": 16.95,
+        "swingStop": 18.62
+      }
+    ]
+  },
+  {
+    "tab": "movers",
+    "date": "2026-03-08",
+    "savedAt": "2026-03-08T21:29:37.045Z",
+    "predictions": [
+      {
+        "symbol": "MOBX",
+        "signal": "HOLD",
+        "entryPrice": 1.04,
+        "dayTarget": 1.04,
+        "dayStop": 1.04,
+        "swingTarget": 0.77,
+        "swingStop": 1.2,
+        "changePercent": 530.3,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "TURB",
+        "signal": "HOLD",
+        "entryPrice": 3.78,
+        "dayTarget": 3.78,
+        "dayStop": 3.78,
+        "swingTarget": 2.77,
+        "swingStop": 4.37,
+        "changePercent": 460,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "TPET",
+        "signal": "BUY TO COVER",
+        "entryPrice": 1.93,
+        "dayTarget": 1.98,
+        "dayStop": 1.9,
+        "swingTarget": 2.28,
+        "swingStop": 1.73,
+        "changePercent": 359.52,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "BATL",
+        "signal": "BUY TO COVER",
+        "entryPrice": 22.36,
+        "dayTarget": 22.9,
+        "dayStop": 21.99,
+        "swingTarget": 27.57,
+        "swingStop": 19.32,
+        "changePercent": 305.07,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "NPT",
+        "signal": "HOLD",
+        "entryPrice": 20.5,
+        "dayTarget": 20.5,
+        "dayStop": 20.5,
+        "swingTarget": 18.45,
+        "swingStop": 21.53,
+        "changePercent": 256.52,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "EDSA",
+        "signal": "BUY TO COVER",
+        "entryPrice": 6.52,
+        "dayTarget": 6.68,
+        "dayStop": 6.41,
+        "swingTarget": 8.85,
+        "swingStop": 5.16,
+        "changePercent": 196.36,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "AIFF",
+        "signal": "HOLD",
+        "entryPrice": 1.85,
+        "dayTarget": 1.85,
+        "dayStop": 1.85,
+        "swingTarget": 1.42,
+        "swingStop": 2.1,
+        "changePercent": 164.29,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "ANTX",
+        "signal": "BUY TO COVER",
+        "entryPrice": 2.85,
+        "dayTarget": 2.92,
+        "dayStop": 2.8,
+        "swingTarget": 3.69,
+        "swingStop": 2.36,
+        "changePercent": 159.09,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "DXST",
+        "signal": "SELL",
+        "entryPrice": 0.28,
+        "dayTarget": 0.27,
+        "dayStop": 0.28,
+        "swingTarget": 0.15,
+        "swingStop": 0.35,
+        "changePercent": 154.55,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "PRSO",
+        "signal": "BUY",
+        "entryPrice": 2.04,
+        "dayTarget": 2.12,
+        "dayStop": 1.99,
+        "swingTarget": 2.43,
+        "swingStop": 1.81,
+        "changePercent": 140,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "CRE",
+        "signal": "BUY TO COVER",
+        "entryPrice": 4.53,
+        "dayTarget": 4.64,
+        "dayStop": 4.45,
+        "swingTarget": 5.42,
+        "swingStop": 4.01,
+        "changePercent": 103.14,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "DAWN",
+        "signal": "BUY TO COVER",
+        "entryPrice": 21.2,
+        "dayTarget": 21.71,
+        "dayStop": 20.84,
+        "swingTarget": 23.32,
+        "swingStop": 20.14,
+        "changePercent": 100,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "ALTO",
+        "signal": "BUY TO COVER",
+        "entryPrice": 4.39,
+        "dayTarget": 4.5,
+        "dayStop": 4.32,
+        "swingTarget": 4.83,
+        "swingStop": 4.17,
+        "changePercent": 92.54,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "BNAI",
+        "signal": "BUY",
+        "entryPrice": 56.27,
+        "dayTarget": 58.52,
+        "dayStop": 54.86,
+        "swingTarget": 61.9,
+        "swingStop": 53.03,
+        "changePercent": 57.71,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "PHGE",
+        "signal": "SELL SHORT",
+        "entryPrice": 6.81,
+        "dayTarget": 6.54,
+        "dayStop": 6.98,
+        "swingTarget": 6.13,
+        "swingStop": 7.18,
+        "changePercent": 55.84,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "EONR",
+        "signal": "SELL",
+        "entryPrice": 0.67,
+        "dayTarget": 0.65,
+        "dayStop": 0.68,
+        "swingTarget": 0.57,
+        "swingStop": 0.73,
+        "changePercent": 55.09,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "SYNX",
+        "signal": "BUY",
+        "entryPrice": 1.58,
+        "dayTarget": 1.64,
+        "dayStop": 1.54,
+        "swingTarget": 2.05,
+        "swingStop": 1.3,
+        "changePercent": 54.75,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "IBG",
+        "signal": "BUY TO COVER",
+        "entryPrice": 5.53,
+        "dayTarget": 5.66,
+        "dayStop": 5.44,
+        "swingTarget": 6.52,
+        "swingStop": 4.95,
+        "changePercent": 53.61,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "TECX",
+        "signal": "HOLD",
+        "entryPrice": 35.87,
+        "dayTarget": 35.87,
+        "dayStop": 35.87,
+        "swingTarget": 30.68,
+        "swingStop": 38.9,
+        "changePercent": 52.96,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "STTK",
+        "signal": "HOLD",
+        "entryPrice": 5.99,
+        "dayTarget": 5.99,
+        "dayStop": 5.99,
+        "swingTarget": 5.39,
+        "swingStop": 6.29,
+        "changePercent": 52.81,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "AMPX",
+        "signal": "BUY",
+        "entryPrice": 16.33,
+        "dayTarget": 16.98,
+        "dayStop": 15.92,
+        "swingTarget": 17.98,
+        "swingStop": 15.37,
+        "changePercent": 52.19,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "SEV",
+        "signal": "HOLD",
+        "entryPrice": 3.28,
+        "dayTarget": 3.28,
+        "dayStop": 3.28,
+        "swingTarget": 2.7,
+        "swingStop": 3.62,
+        "changePercent": 50.46,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "GGR",
+        "signal": "BUY",
+        "entryPrice": 4.66,
+        "dayTarget": 4.85,
+        "dayStop": 4.54,
+        "swingTarget": 5.62,
+        "swingStop": 4.1,
+        "changePercent": 49.36,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "ANNA",
+        "signal": "HOLD",
+        "entryPrice": 4.09,
+        "dayTarget": 4.09,
+        "dayStop": 4.09,
+        "swingTarget": 2.97,
+        "swingStop": 4.74,
+        "changePercent": 43.51,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "TONX",
+        "signal": "HOLD",
+        "entryPrice": 2.73,
+        "dayTarget": 2.73,
+        "dayStop": 2.73,
+        "swingTarget": 2.46,
+        "swingStop": 2.87,
+        "changePercent": 40.72,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "HKIT",
+        "signal": "BUY TO COVER",
+        "entryPrice": 0.92,
+        "dayTarget": 0.94,
+        "dayStop": 0.9,
+        "swingTarget": 1.01,
+        "swingStop": 0.87,
+        "changePercent": -53.42,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "BURU",
+        "signal": "BUY TO COVER",
+        "entryPrice": 0.2982,
+        "dayTarget": 0.31,
+        "dayStop": 0.29,
+        "swingTarget": 0.33,
+        "swingStop": 0.28,
+        "changePercent": -37.87,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "ELAB",
+        "signal": "HOLD",
+        "entryPrice": 0.7397,
+        "dayTarget": 0.74,
+        "dayStop": 0.74,
+        "swingTarget": 0.67,
+        "swingStop": 0.78,
+        "changePercent": -37.84,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "SES",
+        "signal": "BUY TO COVER",
+        "entryPrice": 1.13,
+        "dayTarget": 1.16,
+        "dayStop": 1.11,
+        "swingTarget": 1.24,
+        "swingStop": 1.07,
+        "changePercent": -31.1,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "KXIN",
+        "signal": "BUY TO COVER",
+        "entryPrice": 0.4069,
+        "dayTarget": 0.42,
+        "dayStop": 0.4,
+        "swingTarget": 0.45,
+        "swingStop": 0.39,
+        "changePercent": -28.49,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "CONI",
+        "signal": "BUY TO COVER",
+        "entryPrice": 53.45,
+        "dayTarget": 54.73,
+        "dayStop": 52.55,
+        "swingTarget": 58.8,
+        "swingStop": 50.78,
+        "changePercent": -27.31,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "BH",
+        "signal": "SELL SHORT",
+        "entryPrice": 304.6,
+        "dayTarget": 292.42,
+        "dayStop": 312.21,
+        "swingTarget": 274.14,
+        "swingStop": 319.83,
+        "changePercent": -21.45,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "SHAZ",
+        "signal": "HOLD",
+        "entryPrice": 19.5,
+        "dayTarget": 19.5,
+        "dayStop": 19.5,
+        "swingTarget": 17.55,
+        "swingStop": 20.48,
+        "changePercent": -21.43,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "CLPT",
+        "signal": "HOLD",
+        "entryPrice": 10,
+        "dayTarget": 10,
+        "dayStop": 10,
+        "swingTarget": 9,
+        "swingStop": 10.58,
+        "changePercent": -20.45,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "LITE",
+        "signal": "SELL SHORT",
+        "entryPrice": 558.44,
+        "dayTarget": 536.1,
+        "dayStop": 572.4,
+        "swingTarget": 502.18,
+        "swingStop": 591.26,
+        "changePercent": -20.33,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "GOAI",
+        "signal": "BUY TO COVER",
+        "entryPrice": 4.1,
+        "dayTarget": 4.2,
+        "dayStop": 4.03,
+        "swingTarget": 4.56,
+        "swingStop": 3.83,
+        "changePercent": -20.23,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "CDIO",
+        "signal": "HOLD",
+        "entryPrice": 5.3,
+        "dayTarget": 5.3,
+        "dayStop": 5.3,
+        "swingTarget": 4.65,
+        "swingStop": 5.68,
+        "changePercent": -19.08,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "CCL",
+        "signal": "SELL",
+        "entryPrice": 25.79,
+        "dayTarget": 25.17,
+        "dayStop": 26.22,
+        "swingTarget": 23.21,
+        "swingStop": 27.08,
+        "changePercent": -18.26,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "SITM",
+        "signal": "HOLD",
+        "entryPrice": 327.35,
+        "dayTarget": 327.35,
+        "dayStop": 327.35,
+        "swingTarget": 294.62,
+        "swingStop": 343.72,
+        "changePercent": -17.73,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "MDB",
+        "signal": "BUY TO COVER",
+        "entryPrice": 270.47,
+        "dayTarget": 276.96,
+        "dayStop": 265.94,
+        "swingTarget": 297.52,
+        "swingStop": 256.95,
+        "changePercent": -17.66,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "SNDK",
+        "signal": "HOLD",
+        "entryPrice": 527.33,
+        "dayTarget": 527.33,
+        "dayStop": 527.33,
+        "swingTarget": 474.6,
+        "swingStop": 553.7,
+        "changePercent": -17,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "LUV",
+        "signal": "BUY",
+        "entryPrice": 41.56,
+        "dayTarget": 43.22,
+        "dayStop": 40.52,
+        "swingTarget": 45.72,
+        "swingStop": 39.48,
+        "changePercent": -15.63,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "DY",
+        "signal": "HOLD",
+        "entryPrice": 357.07,
+        "dayTarget": 357.07,
+        "dayStop": 357.07,
+        "swingTarget": 321.36,
+        "swingStop": 374.92,
+        "changePercent": -14.99,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "FTAI",
+        "signal": "SELL",
+        "entryPrice": 260.35,
+        "dayTarget": 254.1,
+        "dayStop": 264.71,
+        "swingTarget": 234.32,
+        "swingStop": 273.37,
+        "changePercent": -14.86,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "LRCX",
+        "signal": "HOLD",
+        "entryPrice": 199.33,
+        "dayTarget": 199.33,
+        "dayStop": 199.33,
+        "swingTarget": 179.4,
+        "swingStop": 209.3,
+        "changePercent": -14.78,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "TER",
+        "signal": "HOLD",
+        "entryPrice": 273.05,
+        "dayTarget": 273.05,
+        "dayStop": 273.05,
+        "swingTarget": 245.75,
+        "swingStop": 286.7,
+        "changePercent": -14.68,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "BUUU",
+        "signal": "BUY TO COVER",
+        "entryPrice": 12.66,
+        "dayTarget": 12.96,
+        "dayStop": 12.45,
+        "swingTarget": 13.93,
+        "swingStop": 12.03,
+        "changePercent": -14.63,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "AAL",
+        "signal": "HOLD",
+        "entryPrice": 11.18,
+        "dayTarget": 11.18,
+        "dayStop": 11.18,
+        "swingTarget": 10.06,
+        "swingStop": 11.74,
+        "changePercent": -14.46,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "LFUS",
+        "signal": "SELL",
+        "entryPrice": 302.28,
+        "dayTarget": 295.03,
+        "dayStop": 307.34,
+        "swingTarget": 272.05,
+        "swingStop": 317.39,
+        "changePercent": -14.24,
+        "date": "2026-03-08"
+      },
+      {
+        "symbol": "ASPS",
+        "signal": "HOLD",
+        "entryPrice": 6.555,
+        "dayTarget": 6.55,
+        "dayStop": 6.55,
+        "swingTarget": 5.9,
+        "swingStop": 6.88,
+        "changePercent": -13.98,
+        "date": "2026-03-08"
+      }
+    ]
   }
 ]

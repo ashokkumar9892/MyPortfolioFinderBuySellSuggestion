@@ -1,9 +1,10 @@
 import React from 'react';
-import { TradingSignal, SignalType } from '../types';
+import { TradingSignal, SignalType, MonthData } from '../types';
 
 interface Props {
   signal: TradingSignal;
   changePercent: number;   // Polygon day % change (e.g. +117.8%)
+  activeMonth?: MonthData;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -35,7 +36,12 @@ const SIGNAL_BADGE: Record<SignalType, { label: string; cls: string; emoji: stri
 
 // ─── MoverCard ────────────────────────────────────────────────────────────────
 
-const MoverCard: React.FC<Props> = ({ signal, changePercent }) => {
+function rangePos(price: number, low: number, rangeSize: number): number {
+  if (rangeSize <= 0) return 50;
+  return Math.max(0, Math.min(100, ((price - low) / rangeSize) * 100));
+}
+
+const MoverCard: React.FC<Props> = ({ signal, changePercent, activeMonth }) => {
   const badge  = SIGNAL_BADGE[signal.signal];
   const entry  = signal.entryPrice;
   const isLong  = signal.signal === 'BUY' || signal.signal === 'BUY TO COVER';
@@ -146,8 +152,78 @@ const MoverCard: React.FC<Props> = ({ signal, changePercent }) => {
         </div>
       </div>
 
+      {/* ── Monthly Plan (when active) ───────────────────────────────── */}
+      {activeMonth && (() => {
+        const { high, low } = activeMonth;
+        const rangeSize  = high - low;
+        const curPct     = rangeSize > 0 ? rangePos(entry, low, rangeSize) : 50;
+        const toHighPct  = entry > 0 ? ((high  - entry) / entry) * 100 : 0;
+        const toLowPct   = entry > 0 ? ((entry - low)   / entry) * 100 : 0;
+        const rangePct   = low  > 0  ? (rangeSize / low) * 100 : 0;
+        const posLabel   = curPct >= 80 ? 'Near Month High' : curPct <= 20 ? 'Near Month Low' : 'Mid Range';
+        const posColor   = curPct >= 80 ? 'var(--red)' : curPct <= 20 ? 'var(--green)' : 'var(--yellow)';
+        return (
+          <div className="mc-plan mc-plan-day" style={{ borderLeftColor: 'var(--blue)' }}>
+            <div className="mc-plan-title">
+              📅 {activeMonth.label} — Monthly Range
+              {activeMonth.isProjected
+                ? <span className="mc-unconfirmed-chip">Projected</span>
+                : <span style={{ marginLeft: 6, fontSize: '0.7rem', color: 'var(--text2)' }}>Actual</span>}
+            </div>
+            {/* Range bar */}
+            <div className="mc-range" style={{ marginTop: 6 }}>
+              <div className="mc-range-bar-row">
+                <span className="mc-range-edge mc-red-txt">${fmt(low)}</span>
+                <div className="mc-range-track">
+                  <div className="mc-range-fill" style={{ width: `${curPct}%`, background: 'var(--blue)' }} />
+                  <div className="mc-range-dot" style={{ left: `${curPct}%` }} />
+                </div>
+                <span className="mc-range-edge mc-green-txt">${fmt(high)}</span>
+              </div>
+            </div>
+            {/* Return banner */}
+            <div className="sc-return-banner" style={{ marginTop: 6 }}>
+              <div className="sc-return-side">
+                <span className="sc-return-lbl">Month High</span>
+                <span className="sc-return-big mc-green">+{toHighPct.toFixed(2)}%</span>
+              </div>
+              <div className="sc-return-side sc-return-right">
+                <span className="sc-return-lbl">Month Low</span>
+                <span className="sc-return-big mc-red">-{toLowPct.toFixed(2)}%</span>
+              </div>
+              <div className="sc-return-side sc-return-right">
+                <span className="sc-return-lbl">Range</span>
+                <span className="sc-return-big">{rangePct.toFixed(1)}%</span>
+              </div>
+            </div>
+            <div className="mc-plan-grid">
+              <div className="mc-plan-row">
+                <span className="mc-plan-lbl">📈 Expected High</span>
+                <span className="mc-plan-val mc-green">${fmt(high)} <span className="mc-plan-pct">(+{toHighPct.toFixed(2)}%)</span></span>
+              </div>
+              <div className="mc-plan-row">
+                <span className="mc-plan-lbl">📉 Expected Low</span>
+                <span className="mc-plan-val mc-red">${fmt(low)} <span className="mc-plan-pct">(-{toLowPct.toFixed(2)}%)</span></span>
+              </div>
+              <div className="mc-plan-row">
+                <span className="mc-plan-lbl">Position in Range</span>
+                <span className="mc-plan-val" style={{ color: posColor }}>{curPct.toFixed(0)}% — {posLabel}</span>
+              </div>
+            </div>
+            {(isLong || isShort) && (
+              <div style={{ marginTop: 6, fontSize: '0.75rem' }}>
+                {isLong  && curPct <= 30 && <span className="monthly-tag monthly-tag-good">✅ Buying near month low — good entry</span>}
+                {isLong  && curPct >= 70 && <span className="monthly-tag monthly-tag-warn">⚠️ Buying near month high — extended</span>}
+                {isShort && curPct >= 70 && <span className="monthly-tag monthly-tag-good">✅ Shorting near month high — good entry</span>}
+                {isShort && curPct <= 30 && <span className="monthly-tag monthly-tag-warn">⚠️ Shorting near month low — extended</span>}
+              </div>
+            )}
+          </div>
+        );
+      })()}
+
       {/* ── Day Trading Plan ─────────────────────────────────────────── */}
-      <div className="mc-plan mc-plan-day">
+      {!activeMonth && <div className="mc-plan mc-plan-day">
         <div className="mc-plan-title">
           📅 Day Trade — Exit Same Day
           {isHold && <span className="mc-unconfirmed-chip">Expected Range</span>}
@@ -202,10 +278,10 @@ const MoverCard: React.FC<Props> = ({ signal, changePercent }) => {
             <span className="mc-plan-val">{rr}×</span>
           </div>
         </div>
-      </div>
+      </div>}
 
       {/* ── Swing Trading Plan ───────────────────────────────────────── */}
-      <div className="mc-plan mc-plan-swing">
+      {!activeMonth && <div className="mc-plan mc-plan-swing">
         <div className="mc-plan-title">
           📆 Swing Trade
           <span className="mc-hold-chip">Hold until {signal.swingExitDate}</span>
@@ -257,10 +333,10 @@ const MoverCard: React.FC<Props> = ({ signal, changePercent }) => {
             <span className="mc-plan-val mc-purple">1–3 trading days</span>
           </div>
         </div>
-      </div>
+      </div>}
 
       {/* ── Today's Actual Range Bar ─────────────────────────────────── */}
-      {rangeSize > 0 && (
+      {!activeMonth && rangeSize > 0 && (
         <div className="mc-range">
           <div className="mc-range-header">
             <span className="mc-range-title">Today's Actual Range</span>

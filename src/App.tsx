@@ -451,7 +451,11 @@ const App: React.FC = () => {
       ════════════════════════════════════════════════════════════════════ */}
       {activeTab === 'movers' && (
         <main className="main-content">
-          <GainersLosers tradeMode={tradeMode} />
+          <GainersLosers
+            tradeMode={tradeMode}
+            monthlyView={monthlyView}
+            selectedMonthOffset={selectedMonthOffset}
+          />
         </main>
       )}
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import MoverCard from './MoverCard';
-import { TradingSignal, TradeMode, StrategyParams, MoverInfo } from '../types';
-import { fetchAllStocks, isMarketOpen, marketSession } from '../services/stockApi';
+import { TradingSignal, TradeMode, StrategyParams, MoverInfo, MonthlyRangeData, MonthData } from '../types';
+import { fetchAllStocks, isMarketOpen, marketSession, fetchMonthlyRanges } from '../services/stockApi';
 import { analyzeStock } from '../services/strategy';
 import {
   loadMoverParams,
@@ -41,9 +41,13 @@ function computeReturnInfo(sig: TradingSignal, changePct: number) {
   return { dayTgt, dayStop, swingTgt, dayRetPct, dayRiskPct, swingRetPct, rr, bullish };
 }
 
-interface Props { tradeMode: TradeMode; }
+interface Props {
+  tradeMode: TradeMode;
+  monthlyView: boolean;
+  selectedMonthOffset: number;
+}
 
-const GainersLosers: React.FC<Props> = ({ tradeMode }) => {
+const GainersLosers: React.FC<Props> = ({ tradeMode, monthlyView, selectedMonthOffset }) => {
   const [gainerInfos,   setGainerInfos]   = useState<MoverInfo[]>([]);
   const [loserInfos,    setLoserInfos]    = useState<MoverInfo[]>([]);
   const [gainerSignals, setGainerSignals] = useState<TradingSignal[]>([]);
@@ -60,6 +64,8 @@ const GainersLosers: React.FC<Props> = ({ tradeMode }) => {
   const [reviewHistory,     setReviewHistory]     = useState<ReviewRecord[]>([]);
   const [rangeReviewHistory, setRangeReviewHistory] = useState<RangeReview[]>([]);
   const [topView,           setTopView]           = useState<'day' | 'swing'>('day');
+  const [monthlyRanges,     setMonthlyRanges]     = useState<Record<string, MonthlyRangeData>>({});
+  const [monthlyLoading,    setMonthlyLoading]    = useState(false);
 
   // ── Top-50 derived data ────────────────────────────────────────────────────
   const enriched = useMemo(() => {
@@ -188,6 +194,34 @@ const GainersLosers: React.FC<Props> = ({ tradeMode }) => {
     return () => clearInterval(id);
   }, [lastUpdated]);
 
+  // ── Monthly range helpers ──────────────────────────────────────────────────
+  function getMonthKey(offset: number): string {
+    const d = new Date();
+    d.setDate(1);
+    d.setMonth(d.getMonth() + offset);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  }
+
+  function getActiveMonth(sym: string): MonthData | undefined {
+    const key = getMonthKey(selectedMonthOffset);
+    return monthlyRanges[sym]?.months[key];
+  }
+
+  // ── Fetch monthly ranges when monthlyView toggles on ──────────────────────
+  useEffect(() => {
+    if (!monthlyView) return;
+    const allSymbols = [...new Set([...gainerInfos, ...loserInfos].map(m => m.symbol))];
+    if (allSymbols.length === 0) return;
+    const missing = allSymbols.filter(s => !monthlyRanges[s]);
+    if (missing.length === 0) return;
+    setMonthlyLoading(true);
+    fetchMonthlyRanges(missing).then(data => {
+      setMonthlyRanges(prev => ({ ...prev, ...data }));
+      setMonthlyLoading(false);
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [monthlyView, gainerInfos, loserInfos]);
+
   // ── Render section ─────────────────────────────────────────────────────────
   function renderSection(
     title: string,
@@ -214,7 +248,7 @@ const GainersLosers: React.FC<Props> = ({ tradeMode }) => {
         <div className="stock-grid movers-grid">
           {signals.map(s => {
             const pct = infos.find(i => i.symbol === s.symbol)?.changePercent ?? s.indicators.momentum;
-            return <MoverCard key={s.symbol} signal={s} changePercent={pct} />;
+            return <MoverCard key={s.symbol} signal={s} changePercent={pct} activeMonth={monthlyView ? getActiveMonth(s.symbol) : undefined} />;
           })}
         </div>
       </div>
@@ -241,6 +275,7 @@ const GainersLosers: React.FC<Props> = ({ tradeMode }) => {
               {isOpen && ` · Next: ${countdown}`}
             </span>
           )}
+          {monthlyLoading && <span className="movers-updated">📅 Loading monthly ranges…</span>}
           <button
             className="refresh-btn"
             onClick={() => fetchAndAnalyse(true)}
