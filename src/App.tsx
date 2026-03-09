@@ -26,10 +26,11 @@ import './App.css';
 // ─── Stock list ───────────────────────────────────────────────────────────────
 
 const SYMBOLS = [
-  'ABVX', 'AAP', 'ADMA', 'AGEN','AGMH','AARD','BEKE', 'CELC', 'CNC', 'CONI', 'DAVE','EXAS',
-  'FIVN', 'GLUE','GEMI', 'LUMN', 'LWAY', 'MGPI', 'NNNN','NPKI', 'NVCR', 'NVDL',
+   'AAP', 'AARD','ABVX','ADMA','AEHL','AFJK','AGEN','AGMH',
+   'AMCI','AMST','AXIL','BEKE','BETR', 'CELC', 'CNC', 'CONI', 'DAVE','DARE','EXAS',
+  'FIVN','FLGT', 'GLUE','GEMI','GRPN', 'LUMN', 'KPLT', 'LWAY', 'MGPI', 'NNNN','NPKI', 'NVCR', 'NVDL',
   'ODD', 'PEGA', 'QURE', 'RXO', 'SBUX', 'SERV', 'SOGP', 'TIL','TLS',
-  'TREE', 'UPST', 'WLDN', 'ZEPP',
+  'TREE', 'TURB','UPST', 'WLDN', 'ZEPP',
 ];
 
 const REFRESH_INTERVAL_MS = 10 * 60 * 1000;
