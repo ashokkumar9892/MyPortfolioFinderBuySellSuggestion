@@ -110,7 +110,7 @@ const GainersLosers: React.FC<Props> = ({ tradeMode, monthlyView, selectedMonthO
     setFetchError('');
 
     try {
-      const { gainers, losers } = await fetchMarketMovers(25);
+      const { gainers, losers } = await fetchMarketMovers(50);
       const allSymbols = [...new Set([...gainers.map(g => g.symbol), ...losers.map(l => l.symbol)])];
 
       let allSignals: TradingSignal[] = [];
@@ -265,7 +265,7 @@ const GainersLosers: React.FC<Props> = ({ tradeMode, monthlyView, selectedMonthO
       {/* ── Status bar ──────────────────────────────────────────────────── */}
       <div className="movers-status-bar">
         <span className="movers-status-label">
-          🔥 Top 25 Gainers &amp; Losers · Top 50 by Return · Yahoo Finance scan ·{' '}
+          🔥 Top 50 Gainers &amp; Losers · Yahoo Finance scan ·{' '}
           {isOpen ? 'Auto-refresh every 15 min' : `${session === 'closed' ? '🔴 Market Closed' : '🌙 After-Hours'} — last data shown`}
         </span>
         <div className="movers-status-right">
@@ -327,8 +327,8 @@ const GainersLosers: React.FC<Props> = ({ tradeMode, monthlyView, selectedMonthO
       {/* ── Results ─────────────────────────────────────────────────────── */}
       {!loading && (
         <>
-          {renderSection('📈 Top 25 Gainers Today', gainerInfos, gainerSignals, 'movers-gainers')}
-          {renderSection('📉 Top 25 Losers Today',  loserInfos,  loserSignals,  'movers-losers')}
+          {renderSection('📈 Top 50 Gainers Today', gainerInfos, gainerSignals, 'movers-gainers')}
+          {renderSection('📉 Top 50 Losers Today',  loserInfos,  loserSignals,  'movers-losers')}
 
           {/* ── Top 50 Best Returns Table ──────────────────────────────── */}
           {enriched.length > 0 && (

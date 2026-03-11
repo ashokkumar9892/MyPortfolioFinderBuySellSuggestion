@@ -125,10 +125,9 @@ async function fetchQuickQuote(symbol) {
   }
 }
 
-// GET /api/market-movers?limit=10
-// Returns { gainers: MoverInfo[], losers: MoverInfo[], scanned: number }
-app.get('/api/market-movers', async (req, res) => {
-  const limit = Math.min(parseInt(req.query.limit || '10'), 50);
+// GET /api/market-movers
+// Returns top 50 gainers and top 50 losers from stocks.csv, sorted by % move.
+app.get('/api/market-movers', async (_req, res) => {
   try {
     const scanList = buildScanList();
 
@@ -141,8 +140,8 @@ app.get('/api/market-movers', async (req, res) => {
     }
 
     const sorted  = [...allQuotes].sort((a, b) => b.changePercent - a.changePercent);
-    const gainers = sorted.slice(0, limit);
-    const losers  = sorted.slice(-limit).reverse();
+    const gainers = sorted.filter(q => q.changePercent > 0).slice(0, 50);
+    const losers  = sorted.filter(q => q.changePercent < 0).reverse().slice(0, 50);
 
     console.log(`[market-movers] Scanned ${allQuotes.length}/${scanList.length}. Top: ${gainers[0]?.symbol} ${gainers[0]?.changePercent}%`);
     res.json({ gainers, losers, scanned: allQuotes.length });
