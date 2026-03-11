@@ -121,16 +121,40 @@ export function analyzeStock(
     reasons.push(`Volume ${volRatio.toFixed(1)}× avg — signal confirmed`);
   }
 
+  // ── Confluence check: count how many indicators agree with direction ─────────
+  // Bullish indicators: RSI oversold, MACD histogram > 0, BB %B < 0.4, price > EMA20
+  // Bearish indicators: RSI overbought, MACD histogram < 0, BB %B > 0.6, price < EMA20
+  const bullishCount =
+    (rsiVal < params.rsiOversold + 10 ? 1 : 0) +          // RSI not overbought / trending low
+    (macdRes.histogram > 0 ? 1 : 0) +                     // MACD bullish
+    (bbRes.percentB < 0.4 ? 1 : 0) +                      // BB lower half
+    (ema20 > 0 && current > ema20 ? 1 : 0);               // Above EMA-20 (uptrend)
+
+  const bearishCount =
+    (rsiVal > params.rsiOverbought - 10 ? 1 : 0) +        // RSI not oversold / trending high
+    (macdRes.histogram < 0 ? 1 : 0) +                     // MACD bearish
+    (bbRes.percentB > 0.6 ? 1 : 0) +                      // BB upper half
+    (ema20 > 0 && current < ema20 ? 1 : 0);               // Below EMA-20 (downtrend)
+
+  // Trend alignment: signal must match EMA-20 trend
+  const aboveEMA = ema20 > 0 && current > ema20;
+  const belowEMA = ema20 > 0 && current < ema20;
+
   // ── Classify signal ─────────────────────────────────────────────────────────
   let signal: SignalType;
 
-  if (score >= params.buyThreshold) {
+  const strongBuy   = score >= params.buyThreshold   && bullishCount >= 2 && aboveEMA;
+  const weakBuy     = score >= params.coverThreshold && bullishCount >= 2 && aboveEMA;
+  const strongShort = score <= -params.shortThreshold && bearishCount >= 2 && belowEMA;
+  const weakSell    = score <= -params.sellThreshold  && bearishCount >= 2 && belowEMA;
+
+  if (strongBuy) {
     signal = 'BUY';
-  } else if (score >= params.coverThreshold) {
+  } else if (weakBuy) {
     signal = 'BUY TO COVER';
-  } else if (score <= -params.shortThreshold) {
+  } else if (strongShort) {
     signal = 'SELL SHORT';
-  } else if (score <= -params.sellThreshold) {
+  } else if (weakSell) {
     signal = 'SELL';
   } else {
     signal = 'HOLD';

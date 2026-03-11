@@ -66,6 +66,28 @@ const GainersLosers: React.FC<Props> = ({ tradeMode, monthlyView, selectedMonthO
   const [topView,           setTopView]           = useState<'day' | 'swing'>('day');
   const [monthlyRanges,     setMonthlyRanges]     = useState<Record<string, MonthlyRangeData>>({});
   const [monthlyLoading,    setMonthlyLoading]    = useState(false);
+  const [searchQuery,       setSearchQuery]       = useState('');
+  const [sortBy,            setSortBy]            = useState<'change' | 'symbol' | 'price'>('change');
+
+  // ── Search + sort helpers ─────────────────────────────────────────────────
+  function filterInfos(infos: MoverInfo[]): MoverInfo[] {
+    const q = searchQuery.trim().toUpperCase();
+    const filtered = q ? infos.filter(i => i.symbol.includes(q) || i.name.toUpperCase().includes(q)) : infos;
+    if (sortBy === 'symbol') return [...filtered].sort((a, b) => a.symbol.localeCompare(b.symbol));
+    if (sortBy === 'price')  return [...filtered].sort((a, b) => b.price - a.price);
+    return filtered; // 'change' — already sorted by server
+  }
+
+  const filteredGainerInfos  = useMemo(() => filterInfos(gainerInfos),  [gainerInfos,  searchQuery, sortBy]);
+  const filteredLoserInfos   = useMemo(() => filterInfos(loserInfos),   [loserInfos,   searchQuery, sortBy]);
+  const filteredGainerSignals = useMemo(() => {
+    const syms = new Set(filteredGainerInfos.map(i => i.symbol));
+    return gainerSignals.filter(s => syms.has(s.symbol));
+  }, [filteredGainerInfos, gainerSignals]);
+  const filteredLoserSignals = useMemo(() => {
+    const syms = new Set(filteredLoserInfos.map(i => i.symbol));
+    return loserSignals.filter(s => syms.has(s.symbol));
+  }, [filteredLoserInfos, loserSignals]);
 
   // ── Top-50 derived data ────────────────────────────────────────────────────
   const enriched = useMemo(() => {
@@ -286,6 +308,35 @@ const GainersLosers: React.FC<Props> = ({ tradeMode, monthlyView, selectedMonthO
         </div>
       </div>
 
+      {/* ── Search + Sort bar ───────────────────────────────────────────── */}
+      <div className="movers-search-bar">
+        <input
+          type="text"
+          className="movers-search-input"
+          placeholder="Search ticker or name… (e.g. WLDS)"
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+        />
+        {searchQuery && (
+          <button className="movers-search-clear" onClick={() => setSearchQuery('')}>✕</button>
+        )}
+        <span className="ctrl-label" style={{ marginLeft: 12 }}>Sort:</span>
+        {(['change', 'symbol', 'price'] as const).map(s => (
+          <button
+            key={s}
+            className={`ctrl-btn ${sortBy === s ? 'active' : ''}`}
+            onClick={() => setSortBy(s)}
+          >
+            {s === 'change' ? '% Change' : s === 'symbol' ? 'A–Z' : 'Price'}
+          </button>
+        ))}
+        {searchQuery && (
+          <span className="movers-search-count">
+            {filteredGainerInfos.length + filteredLoserInfos.length} result{filteredGainerInfos.length + filteredLoserInfos.length !== 1 ? 's' : ''}
+          </span>
+        )}
+      </div>
+
       {/* ── Session banner when closed ──────────────────────────────────── */}
       {!isOpen && (
         <div className="movers-closed-banner">
@@ -320,15 +371,15 @@ const GainersLosers: React.FC<Props> = ({ tradeMode, monthlyView, selectedMonthO
       {(loading || refreshing) && (
         <div className="loading-screen">
           <div className="spinner" />
-          <p>Scanning {loading ? '~550' : ''} stocks for top movers…</p>
+          <p>Scanning stocks from your watchlist…</p>
         </div>
       )}
 
       {/* ── Results ─────────────────────────────────────────────────────── */}
       {!loading && (
         <>
-          {renderSection('📈 Top 50 Gainers Today', gainerInfos, gainerSignals, 'movers-gainers')}
-          {renderSection('📉 Top 50 Losers Today',  loserInfos,  loserSignals,  'movers-losers')}
+          {renderSection('📈 Top 50 Gainers Today', filteredGainerInfos, filteredGainerSignals, 'movers-gainers')}
+          {renderSection('📉 Top 50 Losers Today',  filteredLoserInfos,  filteredLoserSignals,  'movers-losers')}
 
           {/* ── Top 50 Best Returns Table ──────────────────────────────── */}
           {enriched.length > 0 && (

@@ -138,7 +138,7 @@ const PredictionReport: React.FC = () => {
     }
   }
 
-  // ── Overall summary ──────────────────────────────────────────────────────
+  // ── Overall + per-source summary ─────────────────────────────────────────
 
   const totalPredictions = report?.daily.reduce((s, d) => s + d.total, 0) ?? 0;
   const totalCorrect     = report?.daily.reduce((s, d) => s + d.correct, 0) ?? 0;
@@ -147,6 +147,12 @@ const PredictionReport: React.FC = () => {
   const avgRangeHit      = report?.daily.length
     ? report.daily.reduce((s, d) => s + (d.avgRangeHit || 0), 0) / report.daily.length
     : 0;
+
+  // Per-source breakdown from bySource
+  const portfolioSrc = report?.bySource.find(s => s.key === 'portfolio');
+  const moversSrc    = report?.bySource.find(s => s.key === 'movers');
+  const portfolioWin = portfolioSrc ? portfolioSrc.winRate : null;
+  const moversWin    = moversSrc    ? moversSrc.winRate    : null;
 
   // ── Render ───────────────────────────────────────────────────────────────
 
@@ -184,36 +190,43 @@ const PredictionReport: React.FC = () => {
 
       {/* ── Summary Cards ───────────────────────────────────────────────── */}
       {report && (
-        <div className="report-summary-cards">
-          <div className="rpt-card">
-            <span className="rpt-card-label">Total Signals</span>
-            <span className="rpt-card-value">{totalPredictions}</span>
+        <>
+          <div className="report-summary-cards">
+            <div className="rpt-card rpt-card-combined">
+              <span className="rpt-card-label">Combined Win Rate</span>
+              <span className="rpt-card-value" style={{ color: winColor(overallWin) }}>
+                {pct(overallWin)}
+              </span>
+              <span className="rpt-card-sub">{totalCorrect}/{totalPredictions} signals</span>
+            </div>
+            <div className="rpt-card rpt-card-portfolio">
+              <span className="rpt-card-label">Portfolio Win Rate</span>
+              <span className="rpt-card-value" style={{ color: portfolioWin != null ? winColor(portfolioWin) : 'var(--text3)' }}>
+                {portfolioWin != null ? pct(portfolioWin) : '—'}
+              </span>
+              <span className="rpt-card-sub">{portfolioSrc ? `${portfolioSrc.correct}/${portfolioSrc.total}` : 'No data'}</span>
+            </div>
+            <div className="rpt-card rpt-card-movers">
+              <span className="rpt-card-label">Market Movers Win Rate</span>
+              <span className="rpt-card-value" style={{ color: moversWin != null ? winColor(moversWin) : 'var(--text3)' }}>
+                {moversWin != null ? pct(moversWin) : '—'}
+              </span>
+              <span className="rpt-card-sub">{moversSrc ? `${moversSrc.correct}/${moversSrc.total}` : 'No data'}</span>
+            </div>
+            <div className="rpt-card">
+              <span className="rpt-card-label">Target Hits</span>
+              <span className="rpt-card-value green">{totalTargetHits}</span>
+            </div>
+            <div className="rpt-card">
+              <span className="rpt-card-label">Avg Range Hit</span>
+              <span className="rpt-card-value">{pct(avgRangeHit)}</span>
+            </div>
+            <div className="rpt-card">
+              <span className="rpt-card-label">Days Tracked</span>
+              <span className="rpt-card-value">{report.daily.length}</span>
+            </div>
           </div>
-          <div className="rpt-card">
-            <span className="rpt-card-label">Direction Correct</span>
-            <span className="rpt-card-value" style={{ color: winColor(overallWin) }}>
-              {totalCorrect} / {totalPredictions}
-            </span>
-          </div>
-          <div className="rpt-card">
-            <span className="rpt-card-label">Win Rate</span>
-            <span className="rpt-card-value" style={{ color: winColor(overallWin) }}>
-              {pct(overallWin)}
-            </span>
-          </div>
-          <div className="rpt-card">
-            <span className="rpt-card-label">Target Hits</span>
-            <span className="rpt-card-value green">{totalTargetHits}</span>
-          </div>
-          <div className="rpt-card">
-            <span className="rpt-card-label">Avg Range Hit</span>
-            <span className="rpt-card-value">{pct(avgRangeHit)}</span>
-          </div>
-          <div className="rpt-card">
-            <span className="rpt-card-label">Days Tracked</span>
-            <span className="rpt-card-value">{report.daily.length}</span>
-          </div>
-        </div>
+        </>
       )}
 
       {/* ── Export Panel ────────────────────────────────────────────────── */}

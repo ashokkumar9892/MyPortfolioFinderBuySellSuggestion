@@ -1230,6 +1230,44 @@ td.red   { color: var(--red); }
   text-align: center;
 }
 
+/* ── Search + Sort bar ─────────────────────────────────────────────────────── */
+.movers-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.movers-search-input {
+  flex: 1;
+  min-width: 200px;
+  max-width: 320px;
+  padding: 6px 10px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+}
+.movers-search-input:focus { border-color: var(--blue); }
+.movers-search-clear {
+  background: none;
+  border: none;
+  color: var(--text3);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 2px 6px;
+}
+.movers-search-clear:hover { color: var(--text); }
+.movers-search-count {
+  font-size: 12px;
+  color: var(--blue);
+  margin-left: 6px;
+}
+
 /* ── Top-50 opportunities header ───────────────────────────────────────────── */
 .top50-header {
   display: flex;
@@ -1650,6 +1688,10 @@ td.red   { color: var(--red); }
 
 .rpt-card-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
 .rpt-card-value { font-size: 22px; font-weight: 700; color: var(--text); }
+.rpt-card-sub { font-size: 11px; color: var(--text3); }
+.rpt-card-combined { border-left: 3px solid var(--blue); }
+.rpt-card-portfolio { border-left: 3px solid var(--green); }
+.rpt-card-movers    { border-left: 3px solid var(--yellow, #e3b341); }
 
 /* Export panel */
 .export-panel {

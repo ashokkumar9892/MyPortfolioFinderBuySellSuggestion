@@ -87,12 +87,12 @@ export interface StrategyParams {
 }
 
 export const DEFAULT_PARAMS: StrategyParams = {
-  rsiOversold: 35,
-  rsiOverbought: 65,
-  buyThreshold: 1.5,
-  coverThreshold: 0.8,
-  sellThreshold: 0.8,
-  shortThreshold: 1.5,
+  rsiOversold: 32,       // stricter oversold (was 35)
+  rsiOverbought: 68,     // stricter overbought (was 65)
+  buyThreshold: 2.5,     // higher conviction required (was 1.5)
+  coverThreshold: 1.5,   // was 0.8
+  sellThreshold: 1.5,    // was 0.8
+  shortThreshold: 2.5,   // was 1.5
   minVolumeRatio: 1.2,
   bbMultiplier: 2.0,
   targetPct: 0.025,
