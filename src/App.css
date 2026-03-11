@@ -1695,8 +1695,17 @@ td.red   { color: var(--red); }
 }
 .export-btn:hover { background: var(--blue); color: #fff; }
 .export-btn:disabled { opacity: 0.5; cursor: default; }
+.export-btn.view-btn { background: var(--green-dim, #1a2e1a); border-color: var(--green); color: var(--green); }
+.export-btn.view-btn:hover { background: var(--green); color: #000; }
 
 .export-hint { font-size: 11px; color: var(--text3); margin-top: 8px; }
+
+/* View Report inline table */
+.view-report-wrap { margin-top: 8px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.view-report-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; background: var(--bg2); border-bottom: 1px solid var(--border); }
+.view-report-count { font-size: 12px; color: var(--text3); }
+.view-report-table td, .view-report-table th { white-space: nowrap; }
+.red-cell { color: #f85149; }
 
 /* Section tabs */
 .report-section-tabs {

@@ -27,8 +27,9 @@ import './App.css';
 
 const SYMBOLS = [
    'AAP', 'AARD','ABVX','ADMA','AEHL','AFJK','AGEN','AGMH',
-   'AMCI','AMST','AXIL','BEKE','BETR', 'CELC', 'CNC', 'CONI', 'DAVE','DARE','EXAS',
-  'FIVN','FLGT', 'GLUE','GEMI','GRPN', 'LUMN', 'KPLT', 'LWAY', 'MGPI', 'NNNN','NPKI', 'NVCR', 'NVDL',
+   'AMCI','AMST','AXIL','BEKE','BETR', 'BATL','CELC', 'CNC', 'CONI', 'DAVE','DARE','EAT','EXAS',
+  'FIVN','FLGT', 'GLUE','GEMI','GRPN', 'LUMN', 'KPLT',
+   'LWAY','MIGI', 'MGPI', 'NNNN','NPKI', 'NVCR', 'NVDL',
   'ODD', 'PEGA', 'QURE', 'RXO', 'SBUX', 'SERV', 'SOGP', 'TIL','TLS',
   'TREE', 'TURB','UPST', 'WLDN', 'ZEPP',
 ];

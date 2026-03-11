@@ -76,6 +76,8 @@ const PredictionReport: React.FC = () => {
   const [exportFrom, setExportFrom] = useState('');
   const [exportTo, setExportTo] = useState('');
   const [exporting, setExporting] = useState(false);
+  const [viewRows, setViewRows] = useState<any[] | null>(null);
+  const [viewing, setViewing] = useState(false);
 
   const fetchReport = useCallback(async () => {
     setLoading(true);
@@ -92,6 +94,25 @@ const PredictionReport: React.FC = () => {
   }, [weeks]);
 
   useEffect(() => { fetchReport(); }, [fetchReport]);
+
+  async function handleViewReport() {
+    setViewing(true);
+    try {
+      const params = new URLSearchParams({ tab: exportTab });
+      if (exportFrom) params.set('from', exportFrom);
+      if (exportTo)   params.set('to',   exportTo);
+      const res = await fetch(`/api/predictions/export/rows?${params}`);
+      if (!res.ok) {
+        const j = await res.json();
+        alert(j.error || 'No data found');
+        setViewRows(null);
+        return;
+      }
+      setViewRows(await res.json());
+    } finally {
+      setViewing(false);
+    }
+  }
 
   async function handleExport() {
     setExporting(true);
@@ -197,7 +218,7 @@ const PredictionReport: React.FC = () => {
 
       {/* ── Export Panel ────────────────────────────────────────────────── */}
       <div className="export-panel">
-        <h3 className="export-title">Download CSV</h3>
+        <h3 className="export-title">Export / View Data</h3>
         <div className="export-controls">
           <div className="export-row">
             <label className="ctrl-label">Source:</label>
@@ -205,7 +226,7 @@ const PredictionReport: React.FC = () => {
               <button
                 key={t}
                 className={`ctrl-btn ${exportTab === t ? 'active' : ''}`}
-                onClick={() => setExportTab(t)}
+                onClick={() => { setExportTab(t); setViewRows(null); }}
               >
                 {t === 'all' ? 'All' : t === 'portfolio' ? 'Portfolio' : 'Market Movers'}
               </button>
@@ -217,15 +238,22 @@ const PredictionReport: React.FC = () => {
               type="date"
               className="date-input"
               value={exportFrom}
-              onChange={e => setExportFrom(e.target.value)}
+              onChange={e => { setExportFrom(e.target.value); setViewRows(null); }}
             />
             <label className="ctrl-label">To:</label>
             <input
               type="date"
               className="date-input"
               value={exportTo}
-              onChange={e => setExportTo(e.target.value)}
+              onChange={e => { setExportTo(e.target.value); setViewRows(null); }}
             />
+            <button
+              className="export-btn view-btn"
+              onClick={handleViewReport}
+              disabled={viewing}
+            >
+              {viewing ? 'Loading…' : '📊 View Report'}
+            </button>
             <button
               className="export-btn"
               onClick={handleExport}
@@ -236,10 +264,64 @@ const PredictionReport: React.FC = () => {
           </div>
         </div>
         <p className="export-hint">
-          CSV includes: Date · Source · Symbol · Signal · Entry · Day Target/Stop · Swing Target/Stop ·
+          Includes: Date · Source · Symbol · Signal · Entry · Day Target/Stop · Swing Target/Stop ·
           Actual Close · Direction Correct · Outcome · Range Hit % · P&amp;L %
         </p>
       </div>
+
+      {/* ── View Report Table ────────────────────────────────────────────── */}
+      {viewRows && (
+        <div className="view-report-wrap">
+          <div className="view-report-header">
+            <span className="view-report-count">{viewRows.length} rows</span>
+            <button className="ctrl-btn" onClick={() => setViewRows(null)}>✕ Close</button>
+          </div>
+          <div className="report-table-wrap">
+            <table className="report-table view-report-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Source</th>
+                  <th>Symbol</th>
+                  <th>Signal</th>
+                  <th>Entry</th>
+                  <th>Day Target</th>
+                  <th>Day Stop</th>
+                  <th>Actual Close</th>
+                  <th>Dir Correct</th>
+                  <th>Outcome</th>
+                  <th>Range Hit%</th>
+                  <th>P&amp;L%</th>
+                </tr>
+              </thead>
+              <tbody>
+                {viewRows.map((r, i) => (
+                  <tr key={i}>
+                    <td className="sym-cell">{r.date}</td>
+                    <td className="muted-cell">{r.source}</td>
+                    <td className="sym-cell">{r.symbol}</td>
+                    <td className={`signal-cell signal-${(r.signal||'').toLowerCase().replace(/ /g,'-')}`}>{r.signal}</td>
+                    <td>{r.entryPrice ?? '-'}</td>
+                    <td>{r.dayTarget ?? '-'}</td>
+                    <td>{r.dayStop ?? '-'}</td>
+                    <td>{r.actualClose ?? 'Pending'}</td>
+                    <td style={{ color: r.dirCorrect === true ? '#3fb950' : r.dirCorrect === false ? '#f85149' : '#8b949e', fontWeight: 600 }}>
+                      {r.dirCorrect === true ? 'YES' : r.dirCorrect === false ? 'NO' : '—'}
+                    </td>
+                    <td className={r.outcome === 'target-hit' ? 'green' : r.outcome === 'wrong-dir' ? 'red-cell' : ''}>
+                      {r.outcome}
+                    </td>
+                    <td>{r.dayRangeHit != null ? `${r.dayRangeHit}%` : '-'}</td>
+                    <td style={{ color: r.pnlPct != null ? (r.pnlPct >= 0 ? '#3fb950' : '#f85149') : undefined }}>
+                      {r.pnlPct != null ? `${r.pnlPct > 0 ? '+' : ''}${r.pnlPct}%` : '-'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* ── Section Tabs ────────────────────────────────────────────────── */}
       {report && (

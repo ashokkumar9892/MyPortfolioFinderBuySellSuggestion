@@ -77,57 +77,24 @@ app.post('/api/stocks/batch', async (req, res) => {
 // Scans a curated universe of ~180 liquid US stocks, picks top 10 gainers/losers.
 // No external API key required — uses the same Yahoo Finance proxy we already have.
 
-const SCAN_UNIVERSE = [
-  // Mega caps
-  'AAPL','MSFT','GOOGL','AMZN','META','NVDA','TSLA','BRK-B','UNH','LLY','EXAS',
-  // Large cap tech
-  'AMD','INTC','AVGO','QCOM','TXN','ORCL','IBM','CRM','ADBE','NOW',
-  'NFLX','UBER','LYFT','SNAP','PINS','SPOT','RBLX','U','DDOG','NET',
-  'CRWD','OKTA','ZS','SNOW','MDB','PLTR','AFRM','SOFI','UPST','SQ','PYPL',
-  // Finance
-  'JPM','BAC','GS','MS','C','WFC','AXP','BX','KKR','V','MA',
-  // Healthcare / Biotech
-  'JNJ','PFE','MRK','ABBV','AMGN','GILD','BIIB','REGN','VRTX','BMY',
-  'MRNA','BNTX','NVAX','INO','AGEN','NVCR','ADMA','ABVX','CELC','QURE',
-  // Consumer / Retail
-  'WMT','HD','COST','TGT','AMZN','MCD','SBUX','NKE','PG','KO','PEP',
-  // Energy
-  'XOM','CVX','SLB','HAL','DVN','MPC','VLO','OXY',
-  // EV / Auto
-  'TSLA','NIO','XPEV','LI','RIVN','LCID','F','GM',
-  // Crypto / Blockchain
-  'COIN','MSTR','MARA','RIOT','CLSK','HUT','BTBT','CIFR','CORZ','IREN',
-  // ETFs (often used as market indicators)
-  'SPY','QQQ','IWM','UVXY','SQQQ','TQQQ',
-  // Popular volatile / meme
-  'GME','AMC','BB','BBBY','NOK','SNDL','MULN','FFIE',
-  // Semiconductors
-  'MU','LRCX','KLAC','AMAT','ASML','TSM','SMCI',
-  // Travel / Leisure
-  'ABNB','BKNG','EXPE','CCL','RCL','DAL','UAL','AAL','LUV',
-  // Media / Streaming
-  'DIS','PARA','WBD','NFLX','T','VZ','CMCSA',
-  // User portfolio stocks
-  'AAP','CNC','CONI','DAVE','FIVN','GLUE','LUMN','LWAY','MGPI','NNNN',
-  'NVDL','ODD','PEGA','RXO','SERV','SOGP','TIL', 'TLS','TREE','WLDN','ZEPP',
-];
-
-// ── Build the scan list: merge SCAN_UNIVERSE with optional stocks.csv ──────────
-// Drop a stocks.csv file in the project root (one ticker per line or comma-separated)
-// to add your own symbols. They are merged with the built-in list automatically.
+// ── Build the scan list: read only from stocks.csv (updated daily by user) ─────
 function buildScanList() {
   const csvPath = path.join(__dirname, 'stocks.csv');
-  let extra = [];
-  if (fs.existsSync(csvPath)) {
-    try {
-      const raw = fs.readFileSync(csvPath, 'utf8');
-      extra = raw.split(/[\r\n,]+/).map(s => s.trim().toUpperCase()).filter(s => s && !s.startsWith('#'));
-      console.log(`[market-movers] Loaded ${extra.length} extra symbols from stocks.csv`);
-    } catch (e) {
-      console.warn('[market-movers] Could not read stocks.csv:', e.message);
-    }
+  if (!fs.existsSync(csvPath)) {
+    console.warn('[market-movers] stocks.csv not found — nothing to scan');
+    return [];
   }
-  return [...new Set([...SCAN_UNIVERSE, ...extra])];
+  try {
+    const raw = fs.readFileSync(csvPath, 'utf8');
+    const symbols = [...new Set(
+      raw.split(/[\r\n,]+/).map(s => s.trim().toUpperCase()).filter(s => s && !s.startsWith('#'))
+    )];
+    console.log(`[market-movers] Loaded ${symbols.length} symbols from stocks.csv`);
+    return symbols;
+  } catch (e) {
+    console.warn('[market-movers] Could not read stocks.csv:', e.message);
+    return [];
+  }
 }
 
 // ── Fetch one stock quote using the chart API (v8 — no crumb needed) ──────────
@@ -324,7 +291,11 @@ app.post('/api/predictions/review', async (req, res) => {
       const isShort = pred.signal === 'SELL SHORT' || pred.signal === 'SELL';
 
       const priceDiff  = actualPrice - pred.entryPrice;
-      const dirCorrect = (isLong && priceDiff > 0) || (isShort && priceDiff < 0);
+      // Exclude flat stocks (< 0.05% move) from win-rate — they are not meaningful signals
+      const movePct     = pred.entryPrice > 0 ? Math.abs(priceDiff) / pred.entryPrice * 100 : 0;
+      const noMovement  = movePct < 0.05;
+      const dirCorrect  = noMovement ? null
+        : (isLong && priceDiff > 0) || (isShort && priceDiff < 0);
 
       const totalRange = Math.abs(pred.dayTarget - pred.entryPrice);
       const actualMove = isLong ? Math.max(0, actualPrice - pred.entryPrice)
@@ -339,7 +310,8 @@ app.post('/api/predictions/review', async (req, res) => {
         entryPrice: pred.entryPrice, dayTarget: pred.dayTarget, dayStop: pred.dayStop,
         swingTarget: pred.swingTarget, swingStop: pred.swingStop,
         actualPrice, dirCorrect, rangeHitPct, swingHitPct,
-        outcome: dirCorrect ? (rangeHitPct >= 100 ? 'target-hit' : 'correct-dir') : 'wrong-dir',
+        outcome: noMovement ? 'no-movement'
+          : dirCorrect ? (rangeHitPct >= 100 ? 'target-hit' : 'correct-dir') : 'wrong-dir',
       });
       await new Promise(r => setTimeout(r, 80));
     } catch {
@@ -347,17 +319,19 @@ app.post('/api/predictions/review', async (req, res) => {
     }
   }
 
-  const scored   = results.filter(r => r.outcome !== 'no-data' && r.outcome !== 'error');
-  const correct  = scored.filter(r => r.dirCorrect).length;
-  const winRate  = scored.length > 0 ? correct / scored.length : 0;
-  const avgRange = scored.length > 0
+  const scored      = results.filter(r => r.outcome !== 'no-data' && r.outcome !== 'error');
+  // Only count stocks that actually moved (exclude no-movement) for win rate
+  const countable   = scored.filter(r => r.dirCorrect !== null);
+  const correct     = countable.filter(r => r.dirCorrect).length;
+  const winRate     = countable.length > 0 ? correct / countable.length : 0;
+  const avgRange    = scored.length > 0
     ? parseFloat((scored.reduce((s, r) => s + (r.rangeHitPct ?? 0), 0) / scored.length).toFixed(1))
     : 0;
 
   const review = {
     tab, date, reviewedAt: new Date().toISOString(),
-    total: scored.length, correct, winRate, avgRangeHitPct: avgRange, results,
-    summary: `${correct}/${scored.length} correct (${(winRate*100).toFixed(0)}%) · avg range hit ${avgRange}%`,
+    total: countable.length, correct, winRate, avgRangeHitPct: avgRange, results,
+    summary: `${correct}/${countable.length} correct (${(winRate*100).toFixed(0)}%) · avg range hit ${avgRange}%`,
   };
 
   let reviews = readRangeReviews();
@@ -490,6 +464,59 @@ app.get('/api/predictions/export/csv', (req, res) => {
   res.send(csvLines.join('\r\n'));
 });
 
+// GET /api/predictions/export/rows?tab=portfolio|movers|all&from=YYYY-MM-DD&to=YYYY-MM-DD
+// Returns the same data as the CSV but as a JSON array for in-app viewing.
+
+app.get('/api/predictions/export/rows', (req, res) => {
+  const { tab, from, to } = req.query;
+  const allPreds   = readPredictions();
+  const allReviews = readRangeReviews();
+
+  const reviewMap = {};
+  for (const rv of allReviews) {
+    const key = `${rv.tab}__${rv.date}`;
+    reviewMap[key] = {};
+    for (const r of (rv.results || [])) reviewMap[key][r.symbol] = r;
+  }
+
+  const rows = [];
+  for (const entry of allPreds) {
+    if (tab && tab !== 'all' && entry.tab !== tab) continue;
+    if (from && entry.date < from) continue;
+    if (to   && entry.date > to)   continue;
+    const rvKey = `${entry.tab}__${entry.date}`;
+    for (const p of (entry.predictions || [])) {
+      if (p.signal === 'HOLD') continue;
+      const rv = (reviewMap[rvKey] || {})[p.symbol] || {};
+      const isLong  = p.signal === 'BUY' || p.signal === 'BUY TO COVER';
+      const isShort = p.signal === 'SELL SHORT' || p.signal === 'SELL';
+      rows.push({
+        date:       entry.date,
+        source:     entry.tab === 'movers' ? 'Market Movers' : 'Portfolio',
+        symbol:     p.symbol,
+        signal:     p.signal,
+        entryPrice: p.entryPrice  != null ? +p.entryPrice.toFixed(2)  : null,
+        dayTarget:  p.dayTarget   != null ? +p.dayTarget.toFixed(2)   : null,
+        dayStop:    p.dayStop     != null ? +p.dayStop.toFixed(2)     : null,
+        swingTarget: p.swingTarget != null ? +p.swingTarget.toFixed(2) : null,
+        swingStop:  p.swingStop   != null ? +p.swingStop.toFixed(2)   : null,
+        actualClose: rv.actualPrice != null ? +rv.actualPrice.toFixed(2) : null,
+        dirCorrect:  rv.dirCorrect  != null ? rv.dirCorrect : null,
+        outcome:     rv.outcome     || 'Pending',
+        dayRangeHit: rv.rangeHitPct != null ? rv.rangeHitPct : null,
+        pnlPct:      rv.actualPrice != null && p.entryPrice > 0
+          ? +((isLong  ? (rv.actualPrice - p.entryPrice) / p.entryPrice * 100
+              : isShort ? (p.entryPrice - rv.actualPrice) / p.entryPrice * 100
+              : 0).toFixed(2))
+          : null,
+      });
+    }
+  }
+
+  if (rows.length === 0) return res.status(404).json({ error: 'No data found for this range.' });
+  res.json(rows);
+});
+
 // ─── Prediction accuracy report ───────────────────────────────────────────────
 // GET /api/predictions/report?weeks=4
 // Returns per-week + per-signal + per-source stats for the dashboard.
@@ -526,22 +553,35 @@ app.get('/api/predictions/report', (req, res) => {
   const symbolMap   = {}; // symbol → same
   const dailyRows   = []; // one row per day per tab
 
+  // Helper: is this result countable for win-rate (moved at least 0.05%)
+  function isCountable(r) {
+    if (r.actualPrice == null || !r.entryPrice) return false;
+    return Math.abs(r.actualPrice - r.entryPrice) / r.entryPrice * 100 >= 0.05;
+  }
+
   for (const rv of allReviews) {
     if (rv.date < cutoffStr) continue;
     const week  = getWeek(rv.date);
     const preds = predMap[`${rv.tab}__${rv.date}`] || [];
     const holds = preds.filter(p => p.signal === 'HOLD').length;
 
+    // Recalculate from individual results — fixes old reviews that counted flat stocks as wrong
+    const rvResults   = rv.results || [];
+    const countable   = rvResults.filter(isCountable);
+    const rvCorrect   = countable.filter(r => r.dirCorrect).length;
+    const rvTotal     = countable.length;
+    const rvWinRate   = rvTotal > 0 ? rvCorrect / rvTotal : 0;
+
     const row = {
       date:        rv.date,
       week,
       source:      rv.tab === 'movers' ? 'Market Movers' : 'Portfolio',
-      total:       rv.total,
-      correct:     rv.correct,
-      winRate:     rv.winRate,
+      total:       rvTotal,
+      correct:     rvCorrect,
+      winRate:     rvWinRate,
       avgRangeHit: rv.avgRangeHitPct,
       holds,
-      targetHits:  (rv.results || []).filter(r => r.outcome === 'target-hit').length,
+      targetHits:  rvResults.filter(r => r.outcome === 'target-hit').length,
     };
     dailyRows.push(row);
 
@@ -552,14 +592,15 @@ app.get('/api/predictions/report', (req, res) => {
     ]) {
       const [map, key] = bucket;
       if (!map[key]) map[key] = { total: 0, correct: 0, targetHit: 0, pnlSum: 0, pnlCount: 0 };
-      map[key].total     += rv.total;
-      map[key].correct   += rv.correct;
+      map[key].total     += rvTotal;
+      map[key].correct   += rvCorrect;
       map[key].targetHit += row.targetHits;
     }
 
-    // Per-signal breakdown
-    for (const r of (rv.results || [])) {
+    // Per-signal breakdown (only countable results)
+    for (const r of rvResults) {
       if (!r.signal) continue;
+      if (!isCountable(r)) continue; // skip flat stocks
       if (!signalMap[r.signal]) signalMap[r.signal] = { total: 0, correct: 0, targetHit: 0 };
       signalMap[r.signal].total++;
       if (r.dirCorrect)             signalMap[r.signal].correct++;

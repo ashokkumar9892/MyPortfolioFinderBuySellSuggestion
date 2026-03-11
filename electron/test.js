@@ -1,11 +1,7 @@
-
-  const tests = ['electron', 'electron/main', 'electron/common'];
-  tests.forEach(m => {
-    try {
-      const mod = require(m);
-      console.log(m, '->', typeof mod, typeof mod === 'object' ? Object.keys(mod).slice(0,5).join(',') : String(mod).slice(0,40));
-    } catch(err) {
-      console.log(m, '-> ERROR:', err.message.slice(0,60));
-    }
-  });
-  process.exit(0);
+console.log('process.type:', process.type);
+console.log('process.versions.electron:', process.versions.electron);
+const eKeys = Object.keys(process).filter(k => k.toLowerCase().includes('electron') || k.toLowerCase().includes('app'));
+console.log('electron-related process keys:', eKeys.join(', '));
+// Check if running inside ELECTRON_RUN_AS_NODE mode
+console.log('ELECTRON_RUN_AS_NODE:', process.env.ELECTRON_RUN_AS_NODE);
+process.exit(0);

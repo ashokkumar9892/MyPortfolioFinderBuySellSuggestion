@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:7000)",
+      "Bash(npm run electron:dev)",
+      "Bash(npm install cross-env --save-dev)",
+      "Bash(netstat -ano)",
+      "Bash(findstr \":7099\\\\|:7000\\\\|:7001\")",
+      "Bash(./node_modules/.bin/electron electron/test.js)",
+      "Bash(\"d:/Ashok/ETrade/Claude Ai Trade Application/MyPortfolioFinderBuySellSuggestion/node_modules/electron/dist/electron.exe\" --version)",
+      "Bash(wmic process where \"name=''node.exe''\" get executablepath)",
+      "Bash(node -e \"const p = require\\(''d:/Ashok/ETrade/Claude Ai Trade Application/MyPortfolioFinderBuySellSuggestion/node_modules/electron/package.json''\\); console.log\\(JSON.stringify\\(p.exports, null, 2\\)\\)\")",
+      "Bash(npm uninstall electron)",
+      "Bash(npm install electron@32.3.3 --save-dev)"
+    ]
+  }
+}

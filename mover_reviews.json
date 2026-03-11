@@ -14,5 +14,13 @@
     "winRate": 0,
     "tuningSummary": "Win rate 0% — tightened thresholds significantly",
     "savedAt": "2026-03-08T23:00:00.248Z"
+  },
+  {
+    "date": "2026-03-09",
+    "correct": 11,
+    "total": 94,
+    "winRate": 0.11702127659574468,
+    "tuningSummary": "Win rate 12% — tightened thresholds significantly",
+    "savedAt": "2026-03-09T23:00:01.139Z"
   }
 ]
