@@ -30,7 +30,7 @@ const SYMBOLS = [
    'AMCI','AMST','AXIL','BEKE','BETR', 'BATL','CELC', 'CNC', 'CONI', 'DAVE','DARE','EAT','EXAS',
   'FIVN','FLGT', 'GLUE','GEMI','GRPN', 'LUMN', 'KPLT',
    'LWAY','MIGI', 'MGPI', 'NNNN','NPKI', 'NVCR', 'NVDL',
-  'ODD', 'PEGA', 'QURE', 'RXO', 'SBUX', 'SERV', 'SOGP', 'TIL','TLS',
+  'ODD', 'PEGA', 'QURE', 'RXO', 'SBUX', 'SKBL','SERV', 'SOGP', 'TIL','TLS',
   'TREE', 'TURB','UPST', 'WLDN', 'ZEPP',
 ];
 

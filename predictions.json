@@ -8689,12 +8689,12 @@
       },
       {
         "symbol": "DAVE",
-        "signal": "HOLD",
-        "entryPrice": 225.34,
-        "dayTarget": 225.34,
-        "dayStop": 225.34,
-        "swingTarget": 225.34,
-        "swingStop": 225.34
+        "signal": "SELL",
+        "entryPrice": 222.82,
+        "dayTarget": 219.48,
+        "dayStop": 225.06,
+        "swingTarget": 208.89,
+        "swingStop": 229.5
       },
       {
         "symbol": "DARE",
@@ -8974,6 +8974,15 @@
         "dayStop": 20.1,
         "swingTarget": 18.84,
         "swingStop": 20.7
+      },
+      {
+        "symbol": "SKBL",
+        "signal": "HOLD",
+        "entryPrice": 2.93,
+        "dayTarget": 2.93,
+        "dayStop": 2.93,
+        "swingTarget": 2.75,
+        "swingStop": 3.02
       }
     ]
   },
@@ -9567,13 +9576,13 @@
       },
       {
         "symbol": "TSSI",
-        "signal": "HOLD",
-        "entryPrice": 12.6,
-        "dayTarget": 12.6,
-        "dayStop": 12.6,
-        "swingTarget": 11.34,
-        "swingStop": 13.23,
-        "changePercent": 25.5,
+        "signal": "BUY TO COVER",
+        "entryPrice": 13.989,
+        "dayTarget": 14.32,
+        "dayStop": 13.75,
+        "swingTarget": 15.39,
+        "swingStop": 13.29,
+        "changePercent": 40.6,
         "date": "2026-03-11"
       },
       {
@@ -9600,13 +9609,13 @@
       },
       {
         "symbol": "POLA",
-        "signal": "HOLD",
-        "entryPrice": 1.765,
-        "dayTarget": 1.76,
+        "signal": "BUY TO COVER",
+        "entryPrice": 1.785,
+        "dayTarget": 1.83,
         "dayStop": 1.76,
-        "swingTarget": 1.59,
-        "swingStop": 1.85,
-        "changePercent": 19.26,
+        "swingTarget": 1.96,
+        "swingStop": 1.7,
+        "changePercent": 20.95,
         "date": "2026-03-11"
       },
       {
@@ -9787,13 +9796,13 @@
       },
       {
         "symbol": "ATOM",
-        "signal": "HOLD",
-        "entryPrice": 5.29,
-        "dayTarget": 5.29,
-        "dayStop": 5.29,
-        "swingTarget": 4.76,
-        "swingStop": 5.55,
-        "changePercent": 11.27,
+        "signal": "BUY TO COVER",
+        "entryPrice": 5.54,
+        "dayTarget": 5.67,
+        "dayStop": 5.45,
+        "swingTarget": 6.09,
+        "swingStop": 5.26,
+        "changePercent": 15.74,
         "date": "2026-03-11"
       },
       {
@@ -9996,13 +10005,13 @@
       },
       {
         "symbol": "GRPN",
-        "signal": "HOLD",
-        "entryPrice": 11.265,
-        "dayTarget": 11.27,
-        "dayStop": 11.27,
-        "swingTarget": 10.14,
-        "swingStop": 11.84,
-        "changePercent": -9.37,
+        "signal": "SELL",
+        "entryPrice": 10.67,
+        "dayTarget": 10.41,
+        "dayStop": 10.85,
+        "swingTarget": 9.42,
+        "swingStop": 11.4,
+        "changePercent": -15.05,
         "date": "2026-03-11"
       },
       {
@@ -10172,13 +10181,13 @@
       },
       {
         "symbol": "NVDA",
-        "signal": "HOLD",
-        "entryPrice": 186.224,
-        "dayTarget": 186.22,
-        "dayStop": 186.22,
-        "swingTarget": 167.6,
-        "swingStop": 195.54,
-        "changePercent": 1.62,
+        "signal": "BUY TO COVER",
+        "entryPrice": 187.175,
+        "dayTarget": 191.67,
+        "dayStop": 184.04,
+        "swingTarget": 205.89,
+        "swingStop": 177.82,
+        "changePercent": 2.17,
         "date": "2026-03-11"
       },
       {
