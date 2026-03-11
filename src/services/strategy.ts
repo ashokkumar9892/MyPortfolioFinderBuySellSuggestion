@@ -121,32 +121,46 @@ export function analyzeStock(
     reasons.push(`Volume ${volRatio.toFixed(1)}× avg — signal confirmed`);
   }
 
-  // ── Confluence check: count how many indicators agree with direction ─────────
-  // Bullish indicators: RSI oversold, MACD histogram > 0, BB %B < 0.4, price > EMA20
-  // Bearish indicators: RSI overbought, MACD histogram < 0, BB %B > 0.6, price < EMA20
+  // ── Confluence check ─────────────────────────────────────────────────────────
+  // BUY conditions: MACD bullish, BB lower half, above EMA-20, RSI not overbought
   const bullishCount =
-    (rsiVal < params.rsiOversold + 10 ? 1 : 0) +          // RSI not overbought / trending low
-    (macdRes.histogram > 0 ? 1 : 0) +                     // MACD bullish
-    (bbRes.percentB < 0.4 ? 1 : 0) +                      // BB lower half
-    (ema20 > 0 && current > ema20 ? 1 : 0);               // Above EMA-20 (uptrend)
+    (macdRes.histogram > 0 ? 1 : 0) +                     // MACD bullish (momentum building)
+    (bbRes.percentB < 0.5 ? 1 : 0) +                      // price not at top of range
+    (ema20 > 0 && current > ema20 ? 1 : 0) +              // above EMA-20 uptrend
+    (rsiVal < params.rsiOverbought ? 1 : 0);               // RSI not overbought
 
+  // SHORT conditions: MACD bearish, BB upper half, below EMA-20, RSI overbought (not oversold!)
+  // Key insight: only short when RSI is elevated, NOT when stock is already beaten down
   const bearishCount =
-    (rsiVal > params.rsiOverbought - 10 ? 1 : 0) +        // RSI not oversold / trending high
-    (macdRes.histogram < 0 ? 1 : 0) +                     // MACD bearish
-    (bbRes.percentB > 0.6 ? 1 : 0) +                      // BB upper half
-    (ema20 > 0 && current < ema20 ? 1 : 0);               // Below EMA-20 (downtrend)
+    (macdRes.histogram < 0 ? 1 : 0) +                     // MACD bearish (momentum declining)
+    (bbRes.percentB > 0.5 ? 1 : 0) +                      // price at top of range
+    (ema20 > 0 && current < ema20 ? 1 : 0) +              // below EMA-20 downtrend
+    (rsiVal > params.rsiOversold ? 1 : 0);                 // RSI not oversold (crucial — don't short beaten stocks)
 
-  // Trend alignment: signal must match EMA-20 trend
+  // Hard gates: MACD must confirm direction (single most reliable indicator)
+  const macdBullish = macdRes.histogram > 0;
+  const macdBearish = macdRes.histogram < 0;
+
+  // RSI gates: don't BUY overbought, don't SHORT oversold
+  const rsiAllowsBuy   = rsiVal < params.rsiOverbought;    // RSI < 68 for BUY
+  const rsiAllowsSell  = rsiVal > params.rsiOversold + 8;  // RSI > 40 for SELL
+  const rsiAllowsShort = rsiVal > params.rsiOverbought - 8; // RSI > 60 for SELL SHORT (must be elevated)
+
+  // Trend alignment
   const aboveEMA = ema20 > 0 && current > ema20;
   const belowEMA = ema20 > 0 && current < ema20;
 
   // ── Classify signal ─────────────────────────────────────────────────────────
   let signal: SignalType;
 
-  const strongBuy   = score >= params.buyThreshold   && bullishCount >= 2 && aboveEMA;
-  const weakBuy     = score >= params.coverThreshold && bullishCount >= 2 && aboveEMA;
-  const strongShort = score <= -params.shortThreshold && bearishCount >= 2 && belowEMA;
-  const weakSell    = score <= -params.sellThreshold  && bearishCount >= 2 && belowEMA;
+  // BUY: strong score + MACD confirms + RSI OK + above EMA + 3/4 confluence
+  const strongBuy   = score >= params.buyThreshold   && macdBullish && rsiAllowsBuy  && aboveEMA && bullishCount >= 3;
+  // BUY TO COVER: slightly weaker but still needs MACD + EMA + 2/4
+  const weakBuy     = score >= params.coverThreshold && macdBullish && rsiAllowsBuy  && aboveEMA && bullishCount >= 2;
+  // SELL SHORT: very strict — MACD bearish + RSI elevated + below EMA + 3/4
+  const strongShort = score <= -params.shortThreshold && macdBearish && rsiAllowsShort && belowEMA && bearishCount >= 3;
+  // SELL: strict — MACD bearish + RSI not oversold + below EMA + 2/4
+  const weakSell    = score <= -params.sellThreshold  && macdBearish && rsiAllowsSell  && belowEMA && bearishCount >= 2;
 
   if (strongBuy) {
     signal = 'BUY';
@@ -339,29 +353,30 @@ export function tuneParams(
   const p = { ...current };
   let summary = '';
 
-  if (winRate < 0.4) {
-    // Very poor — tighten significantly
-    p.buyThreshold = Math.min(p.buyThreshold + 0.3, 4.5);
-    p.shortThreshold = Math.min(p.shortThreshold + 0.3, 4.5);
+  if (winRate < 0.45) {
+    // Poor — tighten buy+short thresholds, push RSI gates wider
+    p.buyThreshold   = Math.min(p.buyThreshold   + 0.25, 4.0);
+    p.shortThreshold = Math.min(p.shortThreshold + 0.35, 4.5); // tighten shorts more aggressively
     p.coverThreshold = Math.min(p.coverThreshold + 0.15, 3.0);
-    p.sellThreshold = Math.min(p.sellThreshold + 0.15, 3.0);
-    p.rsiOversold = Math.max(p.rsiOversold - 3, 18);
-    p.rsiOverbought = Math.min(p.rsiOverbought + 3, 82);
-    summary = `Win rate ${(winRate * 100).toFixed(0)}% — tightened thresholds significantly`;
-  } else if (winRate < 0.5) {
-    // Below average — tighten slightly
-    p.buyThreshold = Math.min(p.buyThreshold + 0.15, 4.0);
-    p.shortThreshold = Math.min(p.shortThreshold + 0.15, 4.0);
-    p.rsiOversold = Math.max(p.rsiOversold - 1, 22);
-    p.rsiOverbought = Math.min(p.rsiOverbought + 1, 78);
-    summary = `Win rate ${(winRate * 100).toFixed(0)}% — tightened thresholds slightly`;
-  } else if (winRate >= 0.7) {
-    // Good performance — relax slightly to catch more setups
-    p.buyThreshold = Math.max(p.buyThreshold - 0.1, 1.8);
-    p.shortThreshold = Math.max(p.shortThreshold - 0.1, 1.8);
-    p.rsiOversold = Math.min(p.rsiOversold + 1, 33);
-    p.rsiOverbought = Math.max(p.rsiOverbought - 1, 67);
-    summary = `Win rate ${(winRate * 100).toFixed(0)}% — relaxed thresholds slightly`;
+    p.sellThreshold  = Math.min(p.sellThreshold  + 0.20, 3.5);
+    p.rsiOversold    = Math.max(p.rsiOversold  - 2, 20);       // harder to trigger oversold
+    p.rsiOverbought  = Math.min(p.rsiOverbought + 2, 82);      // harder to trigger overbought
+    summary = `Win rate ${(winRate * 100).toFixed(0)}% — tightened thresholds (shorts ++)`;
+  } else if (winRate < 0.55) {
+    // Below target — tighten slightly
+    p.buyThreshold   = Math.min(p.buyThreshold   + 0.1, 3.5);
+    p.shortThreshold = Math.min(p.shortThreshold + 0.2, 4.0);
+    p.rsiOversold    = Math.max(p.rsiOversold  - 1, 22);
+    p.rsiOverbought  = Math.min(p.rsiOverbought + 1, 80);
+    summary = `Win rate ${(winRate * 100).toFixed(0)}% — tightened slightly`;
+  } else if (winRate >= 0.65) {
+    // Good — relax slightly to catch more setups (but keep shorts strict)
+    p.buyThreshold   = Math.max(p.buyThreshold   - 0.1, 1.8);
+    p.shortThreshold = Math.max(p.shortThreshold - 0.05, 2.2); // relax shorts less than buys
+    p.coverThreshold = Math.max(p.coverThreshold - 0.05, 1.0);
+    p.rsiOversold    = Math.min(p.rsiOversold  + 1, 35);
+    p.rsiOverbought  = Math.max(p.rsiOverbought - 1, 65);
+    summary = `Win rate ${(winRate * 100).toFixed(0)}% — relaxed slightly`;
   } else {
     summary = `Win rate ${(winRate * 100).toFixed(0)}% — parameters unchanged`;
   }

@@ -8743,12 +8743,12 @@
       },
       {
         "symbol": "GLUE",
-        "signal": "HOLD",
-        "entryPrice": 17.28,
-        "dayTarget": 17.28,
-        "dayStop": 17.28,
-        "swingTarget": 16.2,
-        "swingStop": 17.8
+        "signal": "SELL",
+        "entryPrice": 16.9,
+        "dayTarget": 16.65,
+        "dayStop": 17.07,
+        "swingTarget": 15.84,
+        "swingStop": 17.41
       },
       {
         "symbol": "GEMI",

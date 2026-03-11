@@ -13,14 +13,15 @@ import { tuneParams } from './strategy';
 const MOVER_PARAMS_KEY    = 'psf_mover_params_v2';
 const MOVER_SNAPSHOTS_KEY = 'psf_mover_snapshots';
 
-// Movers are pre-filtered to 20%+ moves — use lower signal thresholds
-// and wider targets to match the volatility of these stocks
+// Movers are already moving stocks — use moderate thresholds with wide targets
 const MOVER_DEFAULT_PARAMS: StrategyParams = {
   ...DEFAULT_PARAMS,
-  buyThreshold:   1.0,   // was 2.5 — more BUY signals for big movers
-  shortThreshold: 1.0,   // was 2.5
-  coverThreshold: 0.5,
-  sellThreshold:  0.5,
+  buyThreshold:   2.0,   // moderate (movers need momentum, not super strict)
+  shortThreshold: 2.5,   // stricter for shorts (SELL SHORT on movers is risky)
+  coverThreshold: 1.2,
+  sellThreshold:  1.5,
+  rsiOversold:    30,    // only SHORT movers near lower RSI if they're rolling over
+  rsiOverbought:  72,    // movers can sustain high RSI longer
   targetPct:      0.04,  // 4% day target (movers are volatile)
   stopPct:        0.025, // 2.5% stop
 };
